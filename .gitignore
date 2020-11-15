@@ -1,3 +1,7 @@
+.vscode
+.cmake
+sk2_project_server
+
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
