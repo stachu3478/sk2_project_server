@@ -1,5 +1,7 @@
 # SK2 Project Server
 
+![Build status](https://travis-ci.com/stachu3478/sk2_project_server.svg?branch=main)
+
 ## Usage:
 
 ### Requirements:
