@@ -1,3 +1,3 @@
 language: cpp
 compiler: gcc
-script: cmake --build ./build && cd build && ctest
+script: cd build && cmake . && ctest
