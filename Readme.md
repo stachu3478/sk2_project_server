@@ -1,14 +1,12 @@
 # SK2 Project Server
 
-## Setup:
+## Usage:
 
-# Requirements:
-
+### Requirements:
 - CMake - minimum version 3.0.0
 - GCC compiler - version 9.3.0
 
-## Build:
-
+### Build:
 - Run command: `cmake --build ./build`
 - Executable file should appear such at `./build/sk2_project_server` path
 
