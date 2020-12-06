@@ -1,4 +1,4 @@
 language: cpp
 compiler: gcc
-install: cmake ./build
+install: cmake --no-warn-unused-cli -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -H. -B./build -G "Unix Makefiles" && cmake ./build
 script: cmake --build ./build && cd build && ctest
