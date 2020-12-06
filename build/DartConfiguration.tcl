@@ -4,8 +4,8 @@
 
 
 # Configuration directories and files
-SourceDirectory: /home/a/Desktop/sk2-vpn/sk2_project_server
-BuildDirectory: /home/a/Desktop/sk2-vpn/sk2_project_server/build
+SourceDirectory: /home/hasloto123/sk2_project_server
+BuildDirectory: /home/hasloto123/sk2_project_server/build
 
 # Where to place the cost data store
 CostDataFile: 
@@ -14,7 +14,7 @@ CostDataFile:
 Site: ubuntu
 
 # Build name is osname-revision-compiler, i.e. Linux-2.4.2-2smp-c++
-BuildName: Linux-g++-9
+BuildName: Linux-c++
 
 # Subprojects
 LabelsForSubprojects: 
@@ -26,7 +26,7 @@ SubmitURL: http://
 NightlyStartTime: 00:00:00 EDT
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "/usr/bin/cmake" "/home/a/Desktop/sk2-vpn/sk2_project_server"
+ConfigureCommand: "/usr/bin/cmake" "/home/hasloto123/sk2_project_server"
 MakeCommand: /usr/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}" -- -i
 DefaultCTestConfigurationType: Release
 
@@ -62,7 +62,7 @@ UpdateOptions:
 UpdateType: git
 
 # Compiler info
-Compiler: /bin/g++-9
+Compiler: /bin/c++
 CompilerVersion: 9.3.0
 
 # Dynamic analysis (MemCheck)
