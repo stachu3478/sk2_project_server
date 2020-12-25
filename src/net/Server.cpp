@@ -24,11 +24,13 @@ void Server::listenAt(int port) {
         perror("listen failed");
         throw new ConnectException();
     }
+    alive = true;
 }
 
 void Server::shutdown() {
     epollController->onClose(new ServerEpollCloseCallback(this));
-    epollController->close();    
+    epollController->close();
+    alive = false;
 }
 
 void Server::closeAll() {

@@ -1,7 +1,6 @@
 #include "MessageIdentifier.h"
 
-MessageIdentifier::MessageIdentifier(int fd) {
-    this->fd = fd;
+MessageIdentifier::MessageIdentifier() {
     buffer = new std::stringbuf();
 }
 
@@ -31,10 +30,8 @@ void MessageIdentifier::createMessages() {
     do {
         lastMessage->readBuffer(buffer);
         if (lastMessage->isComplete()) {
-            if (callback != nullptr) {
-                callback->call(lastMessage);
-            }
+            lastMessage->receive();
             lastMessage = createMessage(buffer);
         } else break;
-    } while (1);
+    } while (lastMessage != nullptr);
 }

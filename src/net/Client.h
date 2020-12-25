@@ -14,6 +14,7 @@ class Client : public EpollListener {
         virtual ~Client();
 
         void disconnect();
+        void setMessageIdentifier(MessageIdentifier* i);
         void onDisconnection(ClientDisconnectionCallback* cb);
         void onMessage(MessageCallback* cb);
         void emit(MessageOut* m);

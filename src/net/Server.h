@@ -26,6 +26,7 @@ class Server : public EpollListener {
         Server();
         virtual ~Server();
         
+        bool isAlive() { return alive; };
         void listenAt(int port);
         void listenFor(int miliseconds) { epollController->listen(miliseconds); };
         void shutdown();
@@ -36,6 +37,7 @@ class Server : public EpollListener {
         void triggerIn();
         void error();
     private:
+        bool alive = false;
         sockaddr_in addr;
         int sockFd;
         ClientCallback* clientCallback;

@@ -7,19 +7,24 @@ Client::Client(int fd) {
 
 Client::~Client() {}
 
+void Client::disconnect() {
+    close(fd);
+    if (disconnectionCallback != nullptr) {
+        disconnectionCallback->call();
+    }
+}
+
+void Client::setMessageIdentifier(MessageIdentifier* i) {
+    messageIdentifier = i;
+    messageIdentifier->setFd(fd);
+}
+
 void Client::onDisconnection(ClientDisconnectionCallback* c) {
     disconnectionCallback = c;
 }
 
 void Client::onMessage(MessageCallback* c) {
     messageIdentifier->onMessage(c);
-}
-
-void Client::disconnect() {
-    close(fd);
-    if (disconnectionCallback != nullptr) {
-        disconnectionCallback->call();
-    }
 }
 
 void Client::emit(MessageOut* m) {
@@ -34,7 +39,7 @@ void Client::triggerIn() {
 }
 
 void Client::triggerOut() {
-    messageIdentifier->readMessages();
+    messageWriter->writeMessages();
 }
 
 void Client::error() {

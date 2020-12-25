@@ -1,3 +1,5 @@
+#pragma once
+
 #include <unistd.h>
 #include <sstream>
 #include <exception>
@@ -8,9 +10,10 @@ class MessageReadError : public std::exception {};
 
 class MessageIdentifier {
     public:
-        MessageIdentifier(int fd);
+        MessageIdentifier();
         virtual ~MessageIdentifier();
 
+        void setFd(int fd) { this->fd = fd; };
         void onMessage(MessageCallback* cb);
         void readMessages();
     protected:
