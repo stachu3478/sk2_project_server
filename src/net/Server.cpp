@@ -5,6 +5,8 @@ Server::Server() {
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
 }
 
+Server::~Server() {}
+
 void Server::listenAt(int port) {
     addr.sin_port = htons((uint16_t)port);
     sockFd = socket(PF_INET, SOCK_STREAM, 0);
@@ -50,6 +52,7 @@ void Server::trigger() {
     }
     Client* client = new Client(clientFd);
     clients.insert(client);
+    client->onDisconnection(new ServerClientDisconnectionCallback(&clients, client));
     if (clientCallback != nullptr) {
         clientCallback->call(new Client(clientFd));
     }

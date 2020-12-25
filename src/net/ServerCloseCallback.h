@@ -2,5 +2,7 @@
 
 class ServerCloseCallback {
     public:
-        void call() {};
+        ServerCloseCallback();
+        virtual ~ServerCloseCallback();
+        virtual void call();
 };

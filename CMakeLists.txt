@@ -4,8 +4,14 @@ project(sk2_project_server VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
-add_executable(main main.cpp src/events/EpollController src/net/Server )
-target_compile_options(main PRIVATE "-W" "-Wall" "-Wextra" "-pedantic" "-Werror")
+add_executable(main main.cpp
+src/events/EpollController
+src/net/Server
+src/net/ServerCloseCallback
+src/net/Client
+src/net/ClientDisconnectionCallback
+src/net/MessageIdentifier)
+target_compile_options(main PRIVATE "--std=c++2a" "-W" "-Wall" "-Wextra" "-pedantic" "-Werror")
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

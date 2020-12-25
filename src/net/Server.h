@@ -17,12 +17,14 @@
 #include "../events/EpollCloseCallback.h"
 #include "./ServerCloseCallback.h"
 #include "./Client.h"
+#include "./ClientDisconnectionCallback.h"
 
 class ConnectException : public std::exception {};
 
 class Server : public EpollListener {
     public:
         Server();
+        virtual ~Server();
         void listenAt(int port);
         void shutdown();
         void setClientCallback(ClientCallback* c) { clientCallback = c; };
@@ -45,6 +47,14 @@ class Server : public EpollListener {
                 void call() { server->closeAll(); }
             private:
                 Server* server;
+        };
+        class ServerClientDisconnectionCallback : public ClientDisconnectionCallback {
+            public:
+                ServerClientDisconnectionCallback(std::unordered_set<Client*>* c, Client* cl) { clients = c; client = cl; };
+                void call() { clients->erase(client); };
+            private:
+                Client* client;
+                std::unordered_set<Client*>* clients;
         };
 };
 

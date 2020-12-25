@@ -4,5 +4,6 @@
 
 class ClientCallback {
     public:
+        virtual ~ClientCallback();
         virtual void call(Client* client);
 };
