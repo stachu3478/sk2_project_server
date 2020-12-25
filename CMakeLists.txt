@@ -7,10 +7,10 @@ enable_testing()
 add_executable(main main.cpp
 src/events/EpollController
 src/net/Server
-src/net/ServerCloseCallback
 src/net/Client
-src/net/ClientDisconnectionCallback
-src/net/MessageIdentifier)
+src/net/MessageIdentifier
+src/net/MessageWriter
+)
 target_compile_options(main PRIVATE "--std=c++2a" "-W" "-Wall" "-Wextra" "-pedantic" "-Werror")
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})

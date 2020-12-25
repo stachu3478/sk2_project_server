@@ -25,13 +25,14 @@ class Server : public EpollListener {
     public:
         Server();
         virtual ~Server();
+        
         void listenAt(int port);
         void shutdown();
         void setClientCallback(ClientCallback* c) { clientCallback = c; };
         void setEpollController(EpollController* e) { epollController = e; };
         void onShutdown(ServerCloseCallback* c) { closeCallback = c; };
         int getFd() { return sockFd; };
-        void trigger();
+        void triggerIn();
         void error();
     private:
         sockaddr_in addr;

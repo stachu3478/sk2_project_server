@@ -26,8 +26,9 @@ void EpollController::listen() {
             } else if (e.events & EPOLLERR) { //error
                 perror("Epoll event error");
                 if (e.data.ptr != nullptr) l->error();
-            } else if (e.events & EPOLLIN) {
-                l->trigger();
+            } else {
+                if (e.events & EPOLLIN) l->triggerIn();
+                if (e.events & EPOLLOUT) l->triggerOut();
             }
         }
     };

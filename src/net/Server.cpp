@@ -44,7 +44,7 @@ void Server::closeAll() {
     }
 }
 
-void Server::trigger() {
+void Server::triggerIn() {
     int clientFd = accept(sockFd, nullptr, nullptr);
     if (clientFd == -1) {
         perror("accept failed");

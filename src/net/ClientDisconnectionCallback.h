@@ -2,7 +2,5 @@
 
 class ClientDisconnectionCallback {
     public:
-        ClientDisconnectionCallback();
-        virtual ~ClientDisconnectionCallback();
-        virtual void call();
+        virtual void call() = 0;
 };
