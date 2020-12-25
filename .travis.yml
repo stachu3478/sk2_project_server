@@ -2,3 +2,16 @@ language: cpp
 compiler: gcc
 install: cmake --no-warn-unused-cli -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -H. -B./build -G "Unix Makefiles" && cmake ./build
 script: cmake --build ./build && cd build && ctest
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
+      env:
+        - MATRIX_EVAL="CC=gcc-9 & CXX=g++-9"
+before_install:
+  - eval "${MATRIX_EVAL}"
