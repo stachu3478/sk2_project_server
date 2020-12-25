@@ -27,6 +27,7 @@ class Server : public EpollListener {
         virtual ~Server();
         
         void listenAt(int port);
+        void listenFor(int miliseconds) { epollController->listen(miliseconds); };
         void shutdown();
         void setClientCallback(ClientCallback* c) { clientCallback = c; };
         void setEpollController(EpollController* e) { epollController = e; };

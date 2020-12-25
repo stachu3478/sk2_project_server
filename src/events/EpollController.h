@@ -13,7 +13,7 @@ class EpollController {
         EpollController();
         void addListener(EpollListener* l);
         void removeListener(EpollListener* l);
-        void listen();
+        void listen(int miliseconds = -1);
         void close();
         void onClose(EpollCloseCallback* e) { closeCallback = e; };
     private:

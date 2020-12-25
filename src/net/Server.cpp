@@ -24,7 +24,6 @@ void Server::listenAt(int port) {
         perror("listen failed");
         throw new ConnectException();
     }
-    epollController->listen();
 }
 
 void Server::shutdown() {
