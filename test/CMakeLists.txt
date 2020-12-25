@@ -27,3 +27,5 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
 add_executable(addLib addLibTest.h)
 target_link_libraries(addLib gtest_main)
 add_test(NAME addLibTest COMMAND addLib)
+
+add_subdirectory(net)

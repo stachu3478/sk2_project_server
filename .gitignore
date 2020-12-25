@@ -4,6 +4,7 @@ sk2_project_server
 
 build/test
 build/lib
+build/main
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
