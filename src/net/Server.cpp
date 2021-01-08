@@ -45,15 +45,22 @@ void Server::closeAll() {
     }
 }
 
+void Server::clientDisconnected(Client* c) {
+    clients.erase(c);
+    epollController->removeListener(c);
+}
+
 void Server::triggerIn() {
+    printf("Client connecting");
     int clientFd = accept(sockFd, nullptr, nullptr);
     if (clientFd == -1) {
         perror("accept failed");
         throw new ConnectException();
     }
     Client* client = new Client(clientFd);
+    epollController->addListener(client);
     clients.insert(client);
-    client->onDisconnection(new ServerClientDisconnectionCallback(&clients, client));
+    client->onDisconnection(new ServerClientDisconnectionCallback(this, client));
     if (clientCallback != nullptr) {
         clientCallback->call(new Client(clientFd));
     }

@@ -33,6 +33,8 @@ class Server : public EpollListener {
         void setClientCallback(ClientCallback* c) { clientCallback = c; };
         void setEpollController(EpollController* e) { epollController = e; };
         void onShutdown(ServerCloseCallback* c) { closeCallback = c; };
+        void clientDisconnected(Client* c);
+
         int getFd() { return sockFd; };
         void triggerIn();
         void error();
@@ -54,11 +56,11 @@ class Server : public EpollListener {
         };
         class ServerClientDisconnectionCallback : public ClientDisconnectionCallback {
             public:
-                ServerClientDisconnectionCallback(std::unordered_set<Client*>* c, Client* cl) { clients = c; client = cl; };
-                void call() { clients->erase(client); };
+                ServerClientDisconnectionCallback(Server* s, Client* cl) { server = s; client = cl; };
+                void call() { server->clientDisconnected(client); };
             private:
                 Client* client;
-                std::unordered_set<Client*>* clients;
+                Server* server;
         };
 };
 

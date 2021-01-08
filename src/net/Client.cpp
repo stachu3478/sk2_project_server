@@ -23,10 +23,6 @@ void Client::onDisconnection(ClientDisconnectionCallback* c) {
     disconnectionCallback = c;
 }
 
-void Client::onMessage(MessageCallback* c) {
-    messageIdentifier->onMessage(c);
-}
-
 void Client::emit(MessageOut* m) {
     messageWriter->emit(m);
     messageWriter->writeMessages(); // TODO: handle unavailable writes

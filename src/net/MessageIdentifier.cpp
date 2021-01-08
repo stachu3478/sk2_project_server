@@ -6,10 +6,6 @@ MessageIdentifier::MessageIdentifier() {
 
 MessageIdentifier::~MessageIdentifier() {}
 
-void MessageIdentifier::onMessage(MessageCallback* cb) {
-    callback = cb;
-}
-
 void MessageIdentifier::readMessages() {
     int charsRead;
     do {
@@ -27,11 +23,12 @@ void MessageIdentifier::createMessages() {
     if (lastMessage == nullptr) {
         lastMessage = createMessage(buffer);
     }
-    do {
+    while (lastMessage != nullptr) {
         lastMessage->readBuffer(buffer);
         if (lastMessage->isComplete()) {
             lastMessage->receive();
             lastMessage = createMessage(buffer);
         } else break;
-    } while (lastMessage != nullptr);
+    };
+    printf("Reading messages");
 }

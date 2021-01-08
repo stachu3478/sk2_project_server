@@ -13,7 +13,7 @@ class PlayMessage : public GameMessage {
         std::string getNickname() { return nickname; };
 
         void readBuffer(std::stringbuf* buffer);
-        bool isComplete() { return nicknameLength > (char)nickname.size(); };
+        bool isComplete() { return nicknameLength == (char)nickname.size(); };
         void receive() { if (!ignored) player->play(nickname); };
     private:
         std::string nickname;

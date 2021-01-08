@@ -22,13 +22,14 @@ void EpollController::listen(int miliseconds) {
         for (epoll_event e : events) {
             EpollListener* l = (EpollListener*)e.data.ptr;
             if (e.events & EPOLLHUP) {
-                write(1, "SIGINT received, stopping", 26);
+                printf("SIGINT received, stopping\n");
             } else if (e.events & EPOLLERR) { //error
-                perror("Epoll event error");
-                if (e.data.ptr != nullptr) l->error();
+                perror("Epoll event error\n");
+                if (l != nullptr) l->error();
+                else printf("Error if something\n");
             } else {
                 if (e.events & EPOLLIN) l->triggerIn();
-                if (e.events & EPOLLOUT) l->triggerOut();
+                else if (e.events & EPOLLOUT) l->triggerOut();
             }
         }
     };

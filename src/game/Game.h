@@ -6,5 +6,5 @@ class Game {
         virtual ~Game();
 
         void tick() {}; // TODO: implement
-        bool isFinished() { return false; };    
+        bool isFinished() { return false; };
 };

@@ -4,7 +4,6 @@
 #include <sstream>
 #include <exception>
 #include "Message.h"
-#include "MessageCallback.h"
 
 class MessageReadError : public std::exception {};
 
@@ -14,14 +13,12 @@ class MessageIdentifier {
         virtual ~MessageIdentifier();
 
         void setFd(int fd) { this->fd = fd; };
-        void onMessage(MessageCallback* cb);
         void readMessages();
     protected:
         virtual Message* createMessage(std::stringbuf* buffer) = 0;
     private:
         void createMessages();
         Message* lastMessage;
-        MessageCallback* callback;
         int fd;
         char buff[1024];
         std::stringbuf* buffer;

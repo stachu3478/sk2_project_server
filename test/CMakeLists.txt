@@ -29,3 +29,4 @@ target_link_libraries(addLib gtest_main)
 add_test(NAME addLibTest COMMAND addLib)
 
 add_subdirectory(net)
+add_subdirectory(events)
