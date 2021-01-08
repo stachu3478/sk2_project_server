@@ -18,18 +18,23 @@ void EpollController::removeListener(EpollListener* l) {
 void EpollController::listen(int miliseconds) {
     shouldClose = false;
     while(!shouldClose) {
-        epoll_wait(fd, events.data(), events.size(), miliseconds);
-        for (epoll_event e : events) {
-            EpollListener* l = (EpollListener*)e.data.ptr;
-            if (e.events & EPOLLHUP) {
+        epoll_event* evts = events.data();
+        int nFds = epoll_wait(fd, evts, events.size(), miliseconds);
+        if (nFds == -1) {
+            perror("epoll_wait");
+            throw new PollingError();
+        }
+        for (int i = 0; i < nFds; i++) {
+            EpollListener* l = (EpollListener*)evts[i].data.ptr;
+            if (evts[i].events & EPOLLHUP) {
                 printf("SIGINT received, stopping\n");
-            } else if (e.events & EPOLLERR) { //error
+            } else if (evts[i].events & EPOLLERR) { //error
                 perror("Epoll event error\n");
                 if (l != nullptr) l->error();
                 else printf("Error if something\n");
             } else {
-                if (e.events & EPOLLIN) l->triggerIn();
-                else if (e.events & EPOLLOUT) l->triggerOut();
+                if (evts[i].events & EPOLLIN) l->triggerIn();
+                else if (evts[i].events & EPOLLOUT) l->triggerOut();
             }
         }
     };
