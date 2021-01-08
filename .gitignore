@@ -2,9 +2,7 @@
 .cmake
 sk2_project_server
 
-build/test
-build/lib
-build/main
+build
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
