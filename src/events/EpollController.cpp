@@ -30,7 +30,7 @@ void EpollController::listen(int miliseconds) {
                 printf("SIGINT received, stopping\n");
             } else if (evts[i].events & EPOLLERR) { //error
                 perror("Epoll event error\n");
-                if (l != nullptr) l->error();
+                if (l != nullptr) l->error(); // debug purposes
                 else printf("Error if something\n");
             } else {
                 if (evts[i].events & EPOLLIN) l->triggerIn();

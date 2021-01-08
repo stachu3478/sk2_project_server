@@ -9,7 +9,7 @@ void PlayMessage::readBuffer(std::stringbuf* buffer) {
         nicknameLength = buffer->sbumpc();
         bytesToRead--;
     }
-    if (bytesToRead > nicknameLength) bytesToRead = nicknameLength;
+    if (bytesToRead > nicknameLength - nickname.length()) bytesToRead = nicknameLength - nickname.length();
     if (bytesToRead == 0) return;
     char* buff = new char[bytesToRead];
     buffer->sgetn(buff, bytesToRead);
