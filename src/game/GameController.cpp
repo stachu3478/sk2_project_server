@@ -32,6 +32,7 @@ void GameController::tick() {
         games.erase(g);
         delete g;
     }
+    // printf("server did some work\n");
 }
 
 void GameController::addPlayer(Player* p) {

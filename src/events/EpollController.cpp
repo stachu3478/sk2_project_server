@@ -16,10 +16,10 @@ void EpollController::removeListener(EpollListener* l) {
 }
 
 void EpollController::listen(int miliseconds) {
-    shouldClose = false;
-    while(!shouldClose) {
+    auto stopTime = std::chrono::system_clock::now() + std::chrono::milliseconds(miliseconds);
+    while(!shouldClose && stopTime > std::chrono::system_clock::now()) {
         epoll_event* evts = events.data();
-        int nFds = epoll_wait(fd, evts, events.size(), miliseconds);
+        int nFds = epoll_wait(fd, evts, events.size(), std::chrono::duration_cast<std::chrono::milliseconds>(stopTime - std::chrono::system_clock::now()).count());
         if (nFds == -1) {
             perror("epoll_wait");
             throw new PollingError();
