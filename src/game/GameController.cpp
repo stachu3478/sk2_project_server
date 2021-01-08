@@ -13,7 +13,7 @@ GameController::~GameController() {
 }
 
 void GameController::start() {
-    server->listenAt(34780);
+    server->listenAt(portConfig);
     while (server->isAlive()) {
         server->listenFor(50); // TODO: reduce lag by counting delayed time
         tick();

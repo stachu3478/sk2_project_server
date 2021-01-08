@@ -17,11 +17,13 @@ class GameController {
         void start();
         void stop() { server->shutdown(); } ;
         void onStopped(ServerCloseCallback* c) { server->onShutdown(c); };
+        void setServerPort(int port) { portConfig = port; };
     private:
         void tick();
         void addPlayer(Player* p);
         std::unordered_set<Game*> games;
         std::unordered_set<Player*> players;
+        int portConfig = 34780;
 
         Server* server;
 

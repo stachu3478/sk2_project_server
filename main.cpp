@@ -16,12 +16,13 @@ void ctrl_c(int) {
     server->stop();
 }
 
-int main(int, char**) {
-    std::cout << "Hello, world!\n";
-
+int main(int argc, char** argv) {
     signal(SIGINT, ctrl_c);
     signal(SIGPIPE, SIG_IGN);
 
     server = new GameController();
+    if (argc > 1) {
+        server->setServerPort(atoi(argv[1]));
+    }
     server->start();
 }

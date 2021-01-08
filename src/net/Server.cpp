@@ -25,6 +25,7 @@ void Server::listenAt(int port) {
         throw new ConnectException();
     }
     alive = true;
+    printf("Listening on *:%d\n", port);
 }
 
 void Server::shutdown() {
