@@ -18,7 +18,7 @@ void EpollController::removeListener(EpollListener* l) {
 void EpollController::listen(int miliseconds) {
     shouldClose = false;
     while(!shouldClose) {
-        epoll_wait(fd, events.data(), 32, miliseconds);
+        epoll_wait(fd, events.data(), events.size(), miliseconds);
         for (epoll_event e : events) {
             EpollListener* l = (EpollListener*)e.data.ptr;
             if (e.events & EPOLLHUP) {
