@@ -11,6 +11,7 @@
 #include <arpa/inet.h>
 #include <exception>
 #include <unordered_set>
+#include <functional>
 #include "ClientCallback.h"
 #include "../events/EpollListener.h"
 #include "../events/EpollController.h"
@@ -29,10 +30,9 @@ class Server : public EpollListener {
         bool isAlive() { return alive; };
         void listenAt(int port);
         void listenFor(int miliseconds) { epollController->listen(miliseconds); };
-        void shutdown();
+        void shutdown(std::function<void(void)> callback);
         void setClientCallback(ClientCallback* c) { clientCallback = c; };
         void setEpollController(EpollController* e) { epollController = e; };
-        void onShutdown(ServerCloseCallback* c) { closeCallback = c; };
         void clientDisconnected(Client* c);
 
         int getFd() { return sockFd; };
@@ -45,15 +45,8 @@ class Server : public EpollListener {
         ClientCallback* clientCallback;
         std::unordered_set<Client*> clients;
         EpollController* epollController;
-        ServerCloseCallback* closeCallback;
+        std::function<void()> closeCallback;
         void closeAll();
-        class ServerEpollCloseCallback : public EpollCloseCallback {
-            public:
-                ServerEpollCloseCallback(Server* s) { server = s; };
-                void call() { server->closeAll(); }
-            private:
-                Server* server;
-        };
         class ServerClientDisconnectionCallback : public ClientDisconnectionCallback {
             public:
                 ServerClientDisconnectionCallback(Server* s, Client* cl) { server = s; client = cl; };

@@ -4,16 +4,12 @@
 #include "src/events/EpollController.h"
 #include "src/net/ServerCloseCallback.h"
 
-class ShutdownCallback : public ServerCloseCallback {
-    public:
-        void call() { exit(0); };
-};
-
 GameController* server;
 void ctrl_c(int) {
     std::cout << "Server shutting down...\n";
-    server->onStopped(new ShutdownCallback());
-    server->stop();
+    server->stop([](){
+        exit(0);
+    });
 }
 
 int main(int argc, char** argv) {

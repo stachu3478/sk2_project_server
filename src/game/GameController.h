@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_set>
+#include <functional>
 #include "../net/Server.h"
 #include "../net/ClientCallback.h"
 #include "../net/ServerCloseCallback.h"
@@ -15,8 +16,7 @@ class GameController {
         virtual ~GameController();
 
         void start();
-        void stop() { server->shutdown(); } ;
-        void onStopped(ServerCloseCallback* c) { server->onShutdown(c); };
+        void stop(std::function<void()> callback) { server->shutdown(callback); } ;
         void setServerPort(int port) { portConfig = port; };
     private:
         void tick();

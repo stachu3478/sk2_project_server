@@ -28,9 +28,11 @@ void Server::listenAt(int port) {
     printf("Listening on *:%d\n", port);
 }
 
-void Server::shutdown() {
-    epollController->onClose(new ServerEpollCloseCallback(this));
-    epollController->close();
+void Server::shutdown(std::function<void(void)> callback) {
+    epollController->close([this, callback]() {
+        this->closeAll();
+        callback();
+    });
     alive = false;
 }
 
@@ -41,14 +43,12 @@ void Server::closeAll() {
     }
     close(sockFd);
     clients.clear();
-    if (closeCallback != nullptr) {
-        closeCallback->call();
-    }
 }
 
 void Server::clientDisconnected(Client* c) {
     clients.erase(c);
     epollController->removeListener(c);
+    delete c;
 }
 
 void Server::triggerIn() {

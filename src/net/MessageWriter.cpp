@@ -14,11 +14,12 @@ void MessageWriter::emit(MessageOut* m) {
 
 void MessageWriter::writeMessages() {
     int bytesToWrite = buffer->in_avail();
-    char buff[bytesToWrite];
+    char* buff = new char[bytesToWrite];
     buffer->sgetn(buff, bytesToWrite);
     int written = write(fd, buff, bytesToWrite);
     if (written == -1) written = 0;
     for (; written < bytesToWrite; written++) {
         buffer->sungetc();
     }
+    delete buff;
 }

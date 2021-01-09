@@ -4,6 +4,8 @@
 #include <array>
 #include <unistd.h>
 #include <chrono>
+#include <functional>
+#include <signal.h>
 #include "EpollListener.h"
 #include "EpollCloseCallback.h"
 
@@ -15,11 +17,10 @@ class EpollController {
         void addListener(EpollListener* l);
         void removeListener(EpollListener* l);
         void listen(int miliseconds = -1);
-        void close();
-        void onClose(EpollCloseCallback* e) { closeCallback = e; };
+        void close(std::function<void(void)> callback);
     private:
         int fd;
         bool shouldClose;
-        EpollCloseCallback* closeCallback;
+        std::function<void(void)> closeCallback;
         std::array<struct epoll_event, 32> events;
 };
