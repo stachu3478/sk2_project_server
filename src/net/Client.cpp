@@ -9,9 +9,7 @@ Client::~Client() {}
 
 void Client::disconnect() {
     close(fd);
-    if (disconnectionCallback != nullptr) {
-        disconnectionCallback->call();
-    }
+    disconnectionCallback();
 }
 
 void Client::setMessageIdentifier(MessageIdentifier* i) {
@@ -19,7 +17,7 @@ void Client::setMessageIdentifier(MessageIdentifier* i) {
     messageIdentifier->setFd(fd);
 }
 
-void Client::onDisconnection(ClientDisconnectionCallback* c) {
+void Client::onDisconnection(std::function<void()> c) {
     disconnectionCallback = c;
 }
 

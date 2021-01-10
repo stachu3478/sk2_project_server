@@ -1,8 +1,8 @@
 #pragma once
 
 #include <unistd.h>
+#include <functional>
 #include "../events/EpollListener.h"
-#include "./ClientDisconnectionCallback.h"
 #include "./MessageIdentifier.h"
 #include "./MessageWriter.h"
 #include "./MessageOut.h"
@@ -14,7 +14,7 @@ class Client : public EpollListener {
 
         void disconnect();
         void setMessageIdentifier(MessageIdentifier* i);
-        void onDisconnection(ClientDisconnectionCallback* cb);
+        void onDisconnection(std::function<void()> cb);
         void emit(MessageOut* m);
 
         int getFd();
@@ -25,5 +25,5 @@ class Client : public EpollListener {
         int fd;
         MessageIdentifier* messageIdentifier;
         MessageWriter* messageWriter;
-        ClientDisconnectionCallback* disconnectionCallback;
+        std::function<void()> disconnectionCallback;
 };

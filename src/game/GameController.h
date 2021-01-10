@@ -4,7 +4,6 @@
 #include <functional>
 #include "../net/Server.h"
 #include "../net/ClientCallback.h"
-#include "../net/ServerCloseCallback.h"
 #include "../events/EpollController.h"
 #include "GameMessageIdentifier.h"
 #include "Game.h"
@@ -26,12 +25,4 @@ class GameController {
         int portConfig = 34780;
 
         Server* server;
-
-        class GameClientCallback : public ClientCallback {
-            public:
-                GameClientCallback(GameController* c) { controller = c; };
-                void call(Client* c) { controller->addPlayer(new Player(c)); };
-            private:
-                GameController* controller;
-        };
 };

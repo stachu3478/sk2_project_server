@@ -7,7 +7,6 @@
 #include <functional>
 #include <signal.h>
 #include "EpollListener.h"
-#include "EpollCloseCallback.h"
 
 class PollingError : std::exception {};
 

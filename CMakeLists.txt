@@ -8,6 +8,7 @@ add_executable(main main.cpp
 src/events/EpollController
 src/net/Server
 src/net/Client
+src/game/Player
 src/net/MessageIdentifier
 src/net/MessageWriter
 src/game/GameController

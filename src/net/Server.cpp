@@ -61,10 +61,10 @@ void Server::triggerIn() {
     Client* client = new Client(clientFd);
     epollController->addListener(client);
     clients.insert(client);
-    client->onDisconnection(new ServerClientDisconnectionCallback(this, client));
-    if (clientCallback != nullptr) {
-        clientCallback->call(new Client(clientFd));
-    }
+    client->onDisconnection([this, client]{
+        this->clientDisconnected(client);
+    });
+    clientCallback(new Client(clientFd));
 }
 
 void Server::error() {

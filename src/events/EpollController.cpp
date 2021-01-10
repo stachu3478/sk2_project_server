@@ -9,6 +9,7 @@ void EpollController::addListener(EpollListener* l) {
     e.events = EPOLLIN;
     e.data.ptr = l;
     epoll_ctl(fd, EPOLL_CTL_ADD, l->getFd(), &e);
+    printf("ctl added\n");
 }
 
 void EpollController::removeListener(EpollListener* l) {
@@ -30,6 +31,7 @@ void EpollController::listen(int miliseconds) {
         }
         for (int i = 0; i < nFds; i++) {
             EpollListener* l = (EpollListener*)evts[i].data.ptr;
+            printf("You have received a message\n");
             if (evts[i].events & EPOLLHUP) {
                 printf("SIGINT received, stopping\n");
             } else if (evts[i].events & EPOLLERR) { //error

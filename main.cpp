@@ -2,7 +2,6 @@
 #include <signal.h>
 #include "src/game/GameController.h"
 #include "src/events/EpollController.h"
-#include "src/net/ServerCloseCallback.h"
 
 GameController* server;
 void ctrl_c(int) {
