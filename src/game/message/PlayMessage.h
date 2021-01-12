@@ -7,15 +7,16 @@
 
 class PlayMessage : public GameMessage {
     public:
-        PlayMessage() { lengthRead = false; };
+        PlayMessage(std::function<void(PlayMessage*)> cb);
         virtual ~PlayMessage();
 
         std::string getNickname() { return nickname; };
 
         void readBuffer(std::stringbuf* buffer);
         bool isComplete() { return nicknameLengthToRead <= 0; };
-        void receive() { if (!ignored) player->play(nickname); };
+        void receive() { if (!ignored) callback(this); };
     private:
+        std::function<void(PlayMessage*)> callback;
         std::string nickname;
         char nicknameLengthToRead;
         bool lengthRead;

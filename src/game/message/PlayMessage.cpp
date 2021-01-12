@@ -1,5 +1,10 @@
 #include "PlayMessage.h"
 
+PlayMessage::PlayMessage(std::function<void(PlayMessage*)> cb)  {
+    lengthRead = false;
+    this->callback = cb;
+}
+
 PlayMessage::~PlayMessage() {}
 
 void PlayMessage::readBuffer(std::stringbuf* buffer) {

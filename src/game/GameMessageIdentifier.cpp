@@ -9,7 +9,7 @@ Message* GameMessageIdentifier::createMessage(std::stringbuf* buffer) {
     char messageType = buffer->sbumpc();
     printf("Detecting message type\n");
     GameMessage* m = nullptr;
-    if (messageType == 0) m = new PlayMessage();
+    if (messageType == 0) m = new PlayMessage(this->playCallback);
     // else if blablabla
     // ... more message type verifies
     else {

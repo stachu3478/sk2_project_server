@@ -13,11 +13,16 @@ class Player {
         
         void kick(const char* reason);
         bool isIll() { return ill; };
+        void emit(MessageOut* m) { client->emit(m); };
+        void setOwnerId(int id) { this->ownerId = id; };
+        int getOwnerId() { return this->ownerId; };
+        void setIngame(bool ingame);
 
         // Message handles: TODO: implement all required
-        void play(std::string nick) { nickname = nick; printf("%s joined the game\n", nick.c_str()); };
+        void setNickname(std::string nick) { nickname = nick; };
     private:
         std::string nickname;
         Client* client;
         bool ill;
+        int ownerId;
 };

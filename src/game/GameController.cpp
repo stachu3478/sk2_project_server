@@ -43,13 +43,27 @@ void GameController::tick() {
         games.erase(g);
         delete g;
     }
-    //printf("server did some work\n");
 }
 
 void GameController::addPlayer(Player* player) {
     players.insert(player);
     GameMessageIdentifier* messageIdentifier = new GameMessageIdentifier(player);
+    messageIdentifier->onPlay([this](PlayMessage* m){
+        this->assignPlayer(m);
+    });
     messageIdentifier->setMessageFilter(new NewPlayerMessageFilter());
     Client* client = player->getClient();
     client->setMessageIdentifier(messageIdentifier);
+}
+
+void GameController::assignPlayer(PlayMessage* m) {
+    std::string nick = m->getNickname();
+    Player* player = m->getPlayer();
+    player->setNickname(nick);
+    printf("%s joined the game\n", nick.c_str());
+    if (lastGame == nullptr || lastGame->getPlayersCount() >= maxPlayersCountPerGameConfig) {
+        lastGame = new Game();
+        lastGame->addPlayer(player, minPlayersCountToStartConfig);
+        games.insert(lastGame);
+    }
 }

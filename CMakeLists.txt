@@ -8,14 +8,20 @@ add_executable(main main.cpp
 src/events/EpollController
 src/net/Server
 src/net/Client
+src/game/message/messageHelper
+src/game/message/GameMessage
 src/game/message/KickMessage
+src/game/message/PlayMessage
+src/game/message/GameJoinedMessage
+src/game/message/LobbyJoinedMessage
 src/game/Player
+src/game/Game
 src/net/MessageIdentifier
 src/net/MessageWriter
 src/game/GameController
 src/game/GameMessageIdentifier
-src/game/message/GameMessage
-src/game/message/PlayMessage
+
+
 )
 target_compile_options(main PRIVATE "--std=c++2a" "-W" "-Wall" "-Wextra" "-pedantic" "-Werror")
 

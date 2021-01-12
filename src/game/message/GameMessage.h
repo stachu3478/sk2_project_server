@@ -6,6 +6,7 @@
 class GameMessage : public Message {
     public:
         void setPlayer(Player* p) { player = p; };
+        Player* getPlayer() { return player; };
         void ignore() { ignored = true; };
     protected:
         Player* player;
