@@ -5,6 +5,7 @@
 #include "../net/Server.h"
 #include "../net/ClientCallback.h"
 #include "../events/EpollController.h"
+#include "NewPlayerMessageFilter.h"
 #include "GameMessageIdentifier.h"
 #include "Game.h"
 #include "Player.h"

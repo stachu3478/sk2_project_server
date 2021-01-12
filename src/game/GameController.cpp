@@ -3,6 +3,7 @@
 GameController::GameController() {
     server = new Server();
     server->setClientCallback([this](Client* c){
+        printf("Client callback called\n");
         this->addPlayer(new Player(c));
     });
 }
@@ -31,14 +32,24 @@ void GameController::tick() {
             finishedGames.insert(g);
         }
     }
+    for (Player* p : players) {
+        if (p->isIll()) {
+            printf("Ill player, removing...\n");
+            players.erase(p);
+            delete p;
+        }
+    }
     for (Game* g : finishedGames) {
         games.erase(g);
         delete g;
     }
-    // printf("server did some work\n");
+    //printf("server did some work\n");
 }
 
 void GameController::addPlayer(Player* player) {
     players.insert(player);
-    player->getClient()->setMessageIdentifier(new GameMessageIdentifier(player));
+    GameMessageIdentifier* messageIdentifier = new GameMessageIdentifier(player);
+    messageIdentifier->setMessageFilter(new NewPlayerMessageFilter());
+    Client* client = player->getClient();
+    client->setMessageIdentifier(messageIdentifier);
 }

@@ -14,6 +14,7 @@ void EpollController::addListener(EpollListener* l) {
 
 void EpollController::removeListener(EpollListener* l) {
     epoll_ctl(fd, EPOLL_CTL_DEL, l->getFd(), nullptr);
+    printf("ctl removed\n");
 }
 
 void EpollController::listen(int miliseconds) {
@@ -31,9 +32,8 @@ void EpollController::listen(int miliseconds) {
         }
         for (int i = 0; i < nFds; i++) {
             EpollListener* l = (EpollListener*)evts[i].data.ptr;
-            printf("You have received a message\n");
             if (evts[i].events & EPOLLHUP) {
-                printf("SIGINT received, stopping\n");
+                l->error();
             } else if (evts[i].events & EPOLLERR) { //error
                 perror("Epoll event error\n");
                 l->error(); // debug purposes
@@ -44,6 +44,7 @@ void EpollController::listen(int miliseconds) {
         }
     };
     if (shouldClose) { // FIXME: Invalid use of member function
+        printf("Polling closed\n");
         closeCallback();
     }
 }

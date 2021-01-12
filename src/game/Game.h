@@ -7,4 +7,6 @@ class Game {
 
         void tick() {}; // TODO: implement
         bool isFinished() { return false; };
+    private:
+        std::unordered_set<Player*> players;
 };

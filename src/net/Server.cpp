@@ -14,6 +14,12 @@ void Server::listenAt(int port) {
         perror("socket failed");
         throw new ConnectException();
     }
+    const int one = 1;
+    int optSet = setsockopt(sockFd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
+    if (optSet == -1) {
+        perror("setsocketopt failed");
+        throw new ConnectException();
+    }
     int fail = bind(sockFd, (sockaddr*) &addr, sizeof(addr));
     if (fail) {
         perror("bind failed");
@@ -52,19 +58,30 @@ void Server::clientDisconnected(Client* c) {
 }
 
 void Server::triggerIn() {
-    printf("Client connecting");
+    printf("Client connecting\n");
     int clientFd = accept(sockFd, nullptr, nullptr);
     if (clientFd == -1) {
         perror("accept failed");
         throw new ConnectException();
     }
+    int config = fcntl(clientFd, F_SETFL, O_NONBLOCK);
+    if (config == -1) {
+        perror("fctnl");
+        throw new ConnectException();
+    }
+    printf("em\n");
     Client* client = new Client(clientFd);
     epollController->addListener(client);
+    printf("em\n");
     clients.insert(client);
+    printf("em\n");
     client->onDisconnection([this, client]{
+        printf("d\n");
         this->clientDisconnected(client);
     });
-    clientCallback(new Client(clientFd));
+    printf("em\n");
+    clientCallback(client);
+    printf("em\n");
 }
 
 void Server::error() {

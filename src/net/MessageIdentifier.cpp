@@ -1,16 +1,17 @@
 #include "MessageIdentifier.h"
 
 MessageIdentifier::MessageIdentifier() {
-    buffer = new std::stringbuf();
+    
 }
 
 MessageIdentifier::~MessageIdentifier() {}
 
 void MessageIdentifier::readMessages() {
+    if (buffer == nullptr) buffer = new std::stringbuf();
     int charsRead;
     do {
-        charsRead = read(fd, buff, 1024);
-        if (charsRead == -1) {
+        charsRead = read(fd, &buff, 1024);
+        if (charsRead == -1 && errno != EAGAIN) {
             perror("Message read error");
             throw new MessageReadError();
         }
@@ -30,5 +31,5 @@ void MessageIdentifier::createMessages() {
             lastMessage = createMessage(buffer);
         } else break;
     };
-    printf("Reading messages");
+    if (buffer->in_avail() == 0) delete buffer; // clear buffer
 }

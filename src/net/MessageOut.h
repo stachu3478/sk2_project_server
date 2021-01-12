@@ -4,5 +4,5 @@
 
 class MessageOut {
     public:
-        virtual std::string serialize();
+        virtual std::string serialize() = 0;
 };

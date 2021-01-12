@@ -12,7 +12,7 @@ class InvalidMessageError : public std::exception {};
 
 class GameMessageIdentifier : public MessageIdentifier {
     public:
-        GameMessageIdentifier(Player* p) { player = p; };
+        GameMessageIdentifier(Player* p) { printf("msgi constructor called\n"); player = p; };
         virtual ~GameMessageIdentifier();
 
         void setMessageFilter(MessageFilter* f) { filter = f; };

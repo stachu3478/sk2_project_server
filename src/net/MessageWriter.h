@@ -12,5 +12,5 @@ class MessageWriter {
         void writeMessages();
     private:
         int fd;
-        std::stringbuf* buffer;
+        std::stringbuf buffer;
 };
