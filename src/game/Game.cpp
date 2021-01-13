@@ -1,5 +1,7 @@
 #include "Game.h"
 
+Game::Game() {}
+
 Game::~Game() {}
 
 void Game::addPlayer(Player* p, int minimumToStart) {
