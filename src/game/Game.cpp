@@ -1,6 +1,8 @@
 #include "Game.h"
 
-Game::Game() {}
+Game::Game() {
+    printf("Creating new game...\n");
+}
 
 Game::~Game() {}
 

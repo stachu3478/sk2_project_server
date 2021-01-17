@@ -1,36 +1,45 @@
 #include "MessageWriter.h"
 
 MessageWriter::MessageWriter(int fd) {
-    printf("yyyy?\n");
     this->fd = fd;
-    printf("yyyy?\n");
 }
 
 MessageWriter::~MessageWriter() {}
 
 void MessageWriter::emit(MessageOut* m) {
-    std::string messageString = m->serialize();
-    buffer.sputn(messageString.c_str(), messageString.size());
+    char* messageString = m->serialize();
+    if (bufferAllocated) { // need to rewrite buffers
+        writePos -= readPos;
+        char* newBuffer = new char[writePos + m->length()];
+        for (int i = 0; i < writePos; i++) {
+            newBuffer[i] = buffer[readPos++];
+        }
+        readPos = 0;
+        for (int i = 0; i < m->length(); i++) {
+            newBuffer[writePos++] = messageString[i];
+        }
+        delete buffer;
+        buffer = newBuffer;
+    } else {
+        buffer = messageString;
+        writePos = m->length();
+        readPos = 0;
+    }
+    bufferAllocated = true;
 }
 
 void MessageWriter::writeMessages() {
-    int bytesToWrite = buffer.in_avail();
-    char* buff = new char[bytesToWrite];
-    buffer.sgetn(buff, bytesToWrite);
-    printf("Message emitting\n");
-    int written = 0;
     int currentWritten;
     do {
-        currentWritten = write(fd, buff, bytesToWrite);
+        currentWritten = write(fd, buffer + readPos, writePos - readPos);
         if (currentWritten == -1) {
             perror("write");
             currentWritten = 0;
         }
-        written += currentWritten;
-    } while (bytesToWrite > written && currentWritten > 0);
-    printf("Message emitted or at least some part of it\n");
-    for (; written < bytesToWrite; written++) {
-        buffer.sungetc();
+        readPos += currentWritten;
+    } while (writePos - readPos > 0 && currentWritten > 0);
+    if (writePos == readPos) {
+        delete buffer;
+        bufferAllocated = false;
     }
-    delete buff;
 }

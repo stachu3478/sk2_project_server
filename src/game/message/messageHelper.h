@@ -1,4 +1,4 @@
 #include <string>
 #include <sstream>
 
-void insertInteger(std::string* str, int v);
+void insertInteger(char* str, int v);

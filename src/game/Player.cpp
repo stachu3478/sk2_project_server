@@ -2,7 +2,6 @@
 
 Player::Player(Client* c) {
     client = c;
-    if (c == nullptr) printf("warn client is null\n");
     ill = false;
 }
 

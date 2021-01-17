@@ -7,7 +7,8 @@ class GameJoinedMessage : public MessageOut {
         GameJoinedMessage(int mapWidth, int mapHeight) { this->mapWidth = mapWidth; this->mapHeight = mapHeight; };
         virtual ~GameJoinedMessage();
 
-        std::string serialize();
+        char* serialize();
+        int length() { return 13; };
     private:
         int mapWidth;
         int mapHeight;

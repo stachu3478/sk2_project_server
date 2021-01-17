@@ -4,9 +4,9 @@ KickMessage::~KickMessage() {
     delete reason;
 }
 
-std::string KickMessage::serialize() {
-    std::string msg(*reason);
-    msg.push_back(9);
-    msg.push_back(msg.size() - 1);
-    return msg;
+char* KickMessage::serialize() {
+    char* str = new char[reason->size() + 2];
+    str[0] = 9;
+    str[1] = reason->size();
+    return str;
 }

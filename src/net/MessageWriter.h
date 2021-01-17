@@ -1,6 +1,5 @@
 #include <unistd.h>
 #include <sstream>
-#include <string>
 #include "MessageOut.h"
 
 class MessageWriter {
@@ -12,5 +11,8 @@ class MessageWriter {
         void writeMessages();
     private:
         int fd;
-        std::stringbuf buffer;
+        char* buffer;
+        bool bufferAllocated = false;
+        int writePos = 0;
+        int readPos = 0;
 };

@@ -6,7 +6,8 @@ class KickMessage : public MessageOut {
         KickMessage(const char* reason) { this->reason = new std::string(reason); };
         virtual ~KickMessage();
 
-        std::string serialize();
+        char* serialize();
+        int length() { return reason->size() + 2; };
     private:
         std::string* reason;
 };

@@ -22,4 +22,5 @@ class MessageIdentifier {
         int fd;
         char buff[1024];
         std::stringbuf* buffer;
+        bool bufferInitialized = false;
 };

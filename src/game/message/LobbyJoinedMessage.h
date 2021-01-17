@@ -6,7 +6,8 @@ class LobbyJoinedMessage : public MessageOut {
         LobbyJoinedMessage(int minPlayersToStart, int ownerId) { this->minPlayersToStart = minPlayersToStart; this->ownerId = ownerId; };
         virtual ~LobbyJoinedMessage();
 
-        std::string serialize();
+        char* serialize();
+        int length() { return 3; };
     private:
         int minPlayersToStart;
         int ownerId;

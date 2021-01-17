@@ -7,7 +7,10 @@ MessageIdentifier::MessageIdentifier() {
 MessageIdentifier::~MessageIdentifier() {}
 
 void MessageIdentifier::readMessages() {
-    if (buffer == nullptr) buffer = new std::stringbuf();
+    if (!bufferInitialized) {
+        bufferInitialized = true;
+        buffer = new std::stringbuf();
+    }
     int charsRead;
     do {
         charsRead = read(fd, &buff, 1024);
@@ -31,5 +34,8 @@ void MessageIdentifier::createMessages() {
             lastMessage = createMessage(buffer);
         } else break;
     };
-    if (buffer->in_avail() == 0) delete buffer; // clear buffer
+    if (buffer->in_avail() == 0) {
+        bufferInitialized = false;
+        delete buffer; // clear buffer
+    }
 }
