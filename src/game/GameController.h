@@ -26,8 +26,8 @@ class GameController {
         Game* lastGame;
         std::unordered_set<Player*> players;
         int portConfig = 34780;
-        int maxPlayersCountPerGameConfig = 4;
-        int minPlayersCountToStartConfig = 2;
+        unsigned int maxPlayersCountPerGameConfig = 4;
+        unsigned int minPlayersCountToStartConfig = 2;
 
         Server* server;
 };

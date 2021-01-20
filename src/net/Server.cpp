@@ -54,11 +54,9 @@ void Server::closeAll() {
 void Server::clientDisconnected(Client* c) {
     clients.erase(c);
     epollController->removeListener(c);
-    delete c;
 }
 
 void Server::triggerIn() {
-    printf("Client connecting\n");
     int clientFd = accept(sockFd, nullptr, nullptr);
     if (clientFd == -1) {
         perror("accept failed");
@@ -69,19 +67,13 @@ void Server::triggerIn() {
         perror("fctnl");
         throw new ConnectException();
     }
-    printf("em\n");
     Client* client = new Client(clientFd);
     epollController->addListener(client);
-    printf("em\n");
     clients.insert(client);
-    printf("em\n");
     client->onDisconnection([this, client]{
-        printf("d\n");
         this->clientDisconnected(client);
     });
-    printf("em\n");
     clientCallback(client);
-    printf("em\n");
 }
 
 void Server::error() {

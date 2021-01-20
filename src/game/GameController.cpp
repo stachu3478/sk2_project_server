@@ -61,9 +61,9 @@ void GameController::assignPlayer(PlayMessage* m) {
     Player* player = m->getPlayer();
     player->setNickname(nick);
     printf("%s joined the game\n", nick.c_str());
-    if (lastGame == nullptr || lastGame->getPlayersCount() >= maxPlayersCountPerGameConfig) {
-        lastGame = new Game();
+    if (lastGame == nullptr || lastGame->isFull()) {
+        lastGame = new Game(minPlayersCountToStartConfig, maxPlayersCountPerGameConfig);
         games.insert(lastGame);
     }
-    lastGame->addPlayer(player, minPlayersCountToStartConfig);
+    lastGame->addPlayer(player);
 }

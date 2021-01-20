@@ -1,25 +1,24 @@
 #include "Client.h"
 
 Client::Client(int fd) {
-    printf("yyyy?\n");
     this->fd = fd;
-    printf("yyyy?\n");
     this->messageWriter = new MessageWriter(fd);
-    printf("Ich bin eine neue Client\n");
 }
 
 Client::~Client() {
+    delete messageIdentifier;
+    delete messageWriter;
 }
 
 void Client::disconnect() {
     close(fd);
+    fd = -1;
     disconnectionCallback();
 }
 
 void Client::setMessageIdentifier(MessageIdentifier* i) {
     messageIdentifier = i;
     messageIdentifier->setFd(fd);
-    printf("Message identifier set %d\n", fd);
 }
 
 void Client::onDisconnection(std::function<void()> c) {
