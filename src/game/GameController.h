@@ -5,6 +5,7 @@
 #include "../net/Server.h"
 #include "../net/ClientCallback.h"
 #include "../events/EpollController.h"
+#include "GameConfig.h"
 #include "NewPlayerMessageFilter.h"
 #include "GameMessageIdentifier.h"
 #include "Game.h"
@@ -26,8 +27,7 @@ class GameController {
         Game* lastGame;
         std::unordered_set<Player*> players;
         int portConfig = 34780;
-        unsigned int maxPlayersCountPerGameConfig = 4;
-        unsigned int minPlayersCountToStartConfig = 2;
+        GameConfig config;
 
         Server* server;
 };

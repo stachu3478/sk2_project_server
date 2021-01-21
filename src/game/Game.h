@@ -2,6 +2,7 @@
 
 #include "unordered_set"
 #include "Player.h"
+#include "GameConfig.h"
 #include "GameMessageIdentifier.h"
 #include "IngameMessageFilter.h"
 #include "./message/LobbyJoinedMessage.h"
@@ -10,19 +11,19 @@
 
 class Game {
     public:
-        Game(unsigned int minPlayersToStart, unsigned int maxPlayersCount);
+        Game(GameConfig config);
         virtual ~Game();
 
-        void tick() {}; // TODO: implement
+        void tick();
         bool isFinished() { return false; };
-        bool isFull() { return players.size() >= maxPlayersCount; };
-        bool isReadyToStart() { return players.size() >= minPlayersToStart; };
+        bool isFull() { return players.size() >= config.maxPlayersCountPerGame; };
         void addPlayer(Player* p);
-        void start(int mapWidth, int mapHeight);
     private:
+        bool isReadyToStart() { return players.size() >= config.minPlayersCountToStart; };
+        void start();
         std::unordered_set<Player*> players;
         bool started;
-        unsigned int minPlayersToStart;
-        unsigned int maxPlayersCount;
+        GameConfig config;
         int ownerCounter = 0;
+        int countdownTicks;
 };

@@ -1,8 +1,8 @@
 #include "Game.h"
 
-Game::Game(unsigned int minPlayersToStart, unsigned int maxPlayersCount) {
-    this->minPlayersToStart = minPlayersToStart;
-    this->maxPlayersCount = maxPlayersCount;
+Game::Game(GameConfig config) {
+    this->config = config;
+    this->countdownTicks = config.countdownTicks();
     printf("Creating new game...\n");
 }
 
@@ -11,7 +11,7 @@ Game::~Game() {}
 void Game::addPlayer(Player* p) {
     p->setOwnerId(ownerCounter++);
 
-    LobbyJoinedMessage* m = new LobbyJoinedMessage(minPlayersToStart, p->getOwnerId(), maxPlayersCount);
+    LobbyJoinedMessage* m = new LobbyJoinedMessage(config, p->getOwnerId(), countdownTicks / config.tickTime);
     p->emit(m);
 
     PlayerJoinedMessage* pJoinedMessage = new PlayerJoinedMessage(p->getNickname(), p->getOwnerId());
@@ -23,13 +23,22 @@ void Game::addPlayer(Player* p) {
     players.insert(p);
     ((GameMessageIdentifier*)p->getClient()->getMessageIdentifier())->setMessageFilter(new IngameMessageFilter());
     // TODO: add new message subscriptions and filters
-
+    if (isReadyToStart()) start();
 }
 
-void Game::start(int mapWidth, int mapHeight) {
+void Game::start() {
     started = true;
-    GameJoinedMessage* m = new GameJoinedMessage(mapWidth, mapHeight);
+    GameJoinedMessage* m = new GameJoinedMessage();
     for (Player* p : players) {
         p->emit(m);
     }
+}
+
+void Game::tick() {
+    if (!started) return;
+    if (countdownTicks > 0) {
+        countdownTicks--;
+        return;
+    }
+    // TODO: implement
 }

@@ -4,12 +4,9 @@
 
 class GameJoinedMessage : public MessageOut {
     public:
-        GameJoinedMessage(int mapWidth, int mapHeight) { this->mapWidth = mapWidth; this->mapHeight = mapHeight; };
+        GameJoinedMessage() {  };
         virtual ~GameJoinedMessage();
 
         char* serialize();
-        int length() { return 13; };
-    private:
-        int mapWidth;
-        int mapHeight;
+        int length() { return 5; };
 };

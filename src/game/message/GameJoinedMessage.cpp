@@ -3,10 +3,8 @@
 GameJoinedMessage::~GameJoinedMessage() {}
 
 char* GameJoinedMessage::serialize() {
-    char* str = new char[13];
+    char* str = new char[5];
     str[0] = 1;
-    insertInteger(str + 1, 0); // TODO add unit count
-    insertInteger(str + 5, mapWidth);
-    insertInteger(str + 9, mapHeight);
+    insertInteger(str + 1, 0); // TODO add real units
     return str;
 }

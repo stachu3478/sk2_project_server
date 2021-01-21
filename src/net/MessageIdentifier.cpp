@@ -28,7 +28,7 @@ void MessageIdentifier::createMessages() {
         lastMessage = createMessage(buffer);
     }
     while (lastMessage != nullptr) {
-        lastMessage->readBuffer(buffer);
+        lastMessage->readBuffer(buffer); // FIXME: Sometimes segmentation fault
         if (lastMessage->isComplete()) {
             lastMessage->receive();
             lastMessage = createMessage(buffer);
