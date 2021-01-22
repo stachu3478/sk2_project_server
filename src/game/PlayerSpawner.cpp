@@ -12,8 +12,8 @@ PlayerSpawner::~PlayerSpawner() {}
 void PlayerSpawner::spawnPlayer(Player* player) {
     //Spawn units
     double spawnDirection = 2 * M_PI * spawnDirectionClock++ / (double)maxClock;
-    int spawnX = sin(spawnDirection) * (map->getWidth() - 1);
-    int spawnY = cos(spawnDirection) * (map->getHeight() - 1);
+    int spawnX = map->getWidth() / 2 + sin(spawnDirection) * (map->getWidth() / 2 - 1) - 1;
+    int spawnY = map->getHeight() / 2 + cos(spawnDirection) * (map->getHeight() / 2 - 1) - 1;
     int spawnRange = 2;
     int unitsToSpawn = initialUnitCount;
     while (unitsToSpawn > 0) {
