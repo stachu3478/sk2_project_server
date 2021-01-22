@@ -1,7 +1,10 @@
 #pragma once
 
+#include "cmath"
 #include "unordered_set"
+#include "Map.h"
 #include "Player.h"
+#include "PlayerSpawner.h"
 #include "GameConfig.h"
 #include "GameMessageIdentifier.h"
 #include "IngameMessageFilter.h"
@@ -26,4 +29,7 @@ class Game {
         GameConfig config;
         int ownerCounter = 0;
         int countdownTicks;
+        Map* map;
+        PlayerSpawner* spawner;
+        UnitFactory* factory;
 };

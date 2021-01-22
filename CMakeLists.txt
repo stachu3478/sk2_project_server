@@ -15,6 +15,9 @@ src/game/message/PlayMessage
 src/game/message/GameJoinedMessage
 src/game/message/LobbyJoinedMessage
 src/game/message/PlayerJoinedMessage
+src/game/Map
+src/game/UnitFactory
+src/game/PlayerSpawner
 src/game/Player
 src/game/Game
 src/net/MessageIdentifier

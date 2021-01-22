@@ -14,11 +14,12 @@ void MessageIdentifier::readMessages() {
     int charsRead;
     do {
         charsRead = read(fd, &buff, 1024);
-        if (charsRead == -1 && errno != EAGAIN) {
-            perror("Message read error");
-            throw new MessageReadError();
-        }
-        buffer->sputn(buff, charsRead);
+        if (charsRead == -1) {
+            if (errno != EAGAIN) {
+                perror("Message read error");
+                throw new MessageReadError();
+            }
+        } else buffer->sputn(buff, charsRead);
     } while (charsRead > 0);
     createMessages();
 }
