@@ -3,9 +3,11 @@
 #include <sstream>
 #include <exception>
 #include <functional>
+#include "../net/Buffer.h"
 #include "../net/MessageIdentifier.h"
 #include "../net/Message.h"
 #include "./message/PlayMessage.h"
+#include "./message/MoveUnitsMessage.h"
 #include "MessageFilter.h"
 #include "Player.h"
 
@@ -18,10 +20,14 @@ class GameMessageIdentifier : public MessageIdentifier {
 
         void setMessageFilter(MessageFilter* f) { filter = f; };
         void onPlay(std::function<void(PlayMessage*)> cb) { this->playCallback = cb; };
+        void onMoveUnits(std::function<void(MoveUnitsMessage*)> cb) { this->moveUnitsCallback = cb; };
+        void setUnitBatchSize(int size) { maxUnitBatchSize = size; };
 
-        Message* createMessage(std::stringbuf* buffer);
+        Message* createMessage(Buffer* buffer);
     private:
         std::function<void(PlayMessage*)> playCallback;
+        std::function<void(MoveUnitsMessage*)> moveUnitsCallback;
+        int maxUnitBatchSize = 0;
         MessageFilter* filter;
         Player* player;
 };

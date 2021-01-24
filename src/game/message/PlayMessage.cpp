@@ -1,26 +1,22 @@
 #include "PlayMessage.h"
 
 PlayMessage::PlayMessage(std::function<void(PlayMessage*)> cb)  {
-    lengthRead = false;
     this->callback = cb;
 }
 
 PlayMessage::~PlayMessage() {}
 
-void PlayMessage::readBuffer(std::stringbuf* buffer) {
+void PlayMessage::readBuffer(Buffer* buffer) {
     int bytesToRead = buffer->in_avail();
     if (bytesToRead == 0) return;
     if (!lengthRead) {
         nicknameLengthToRead = buffer->sbumpc();
-        bytesToRead--;
         lengthRead = true;
     }
-    if (bytesToRead > nicknameLengthToRead) {
-        bytesToRead = nicknameLengthToRead;
+    if (buffer->in_avail() < nicknameLengthToRead) {
+        return;
     }
-    if (bytesToRead == 0) return;
-    nicknameLengthToRead -= bytesToRead;
-    char* buff = new char[bytesToRead];
-    buffer->sgetn(buff, bytesToRead);
+    char* buff = buffer->sgetn(nicknameLengthToRead);
     nickname += buff;
+    complete = true;
 }

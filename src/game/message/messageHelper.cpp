@@ -14,3 +14,12 @@ void insertInteger(char* str, int v) {
         FF
     */
 }
+
+int readInteger(Buffer* buff) {
+    int val = 0;
+    val += buff->sbumpc() >> 24;
+    val += buff->sbumpc() >> 16;
+    val += buff->sbumpc() >> 8;
+    val += buff->sbumpc() >> 0;
+    return val;
+}

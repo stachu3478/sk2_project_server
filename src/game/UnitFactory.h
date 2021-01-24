@@ -14,6 +14,7 @@ class UnitFactory {
     return unit;
 };
         std::unordered_map<int, Unit*> getUnits() { return units; };
+        Unit* getUnit(int id) { return units.at(id); };
 
     private:
         int idCounter = 0;

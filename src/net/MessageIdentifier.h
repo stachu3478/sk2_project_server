@@ -1,8 +1,11 @@
 #pragma once
 
 #include <unistd.h>
-#include <sstream>
+#include <stdio.h>
+#include <errno.h>
+#include <cstring>
 #include <exception>
+#include "Buffer.h"
 #include "Message.h"
 
 class MessageReadError : public std::exception {};
@@ -15,12 +18,13 @@ class MessageIdentifier {
         void setFd(int fd) { this->fd = fd; };
         void readMessages();
     protected:
-        virtual Message* createMessage(std::stringbuf* buffer) = 0;
+        virtual Message* createMessage(Buffer* buffer) = 0;
     private:
         void createMessages();
         Message* lastMessage;
         int fd;
         char buff[1024];
-        std::stringbuf* buffer;
+        Buffer* buffer = new Buffer();
+        int bufferLength;
         bool bufferInitialized = false;
 };

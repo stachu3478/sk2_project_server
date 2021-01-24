@@ -8,6 +8,7 @@ add_executable(main main.cpp
 src/events/EpollController
 src/net/Server
 src/net/Client
+src/net/Buffer
 src/game/message/messageHelper
 src/game/message/GameMessage
 src/game/message/KickMessage
@@ -15,6 +16,8 @@ src/game/message/PlayMessage
 src/game/message/GameJoinedMessage
 src/game/message/LobbyJoinedMessage
 src/game/message/PlayerJoinedMessage
+src/game/message/UnitMovedMessage
+src/game/message/MoveUnitsMessage
 src/game/Map
 src/game/UnitFactory
 src/game/PlayerSpawner

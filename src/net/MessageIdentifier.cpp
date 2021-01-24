@@ -7,10 +7,6 @@ MessageIdentifier::MessageIdentifier() {
 MessageIdentifier::~MessageIdentifier() {}
 
 void MessageIdentifier::readMessages() {
-    if (!bufferInitialized) {
-        bufferInitialized = true;
-        buffer = new std::stringbuf();
-    }
     int charsRead;
     do {
         charsRead = read(fd, &buff, 1024);
@@ -19,12 +15,16 @@ void MessageIdentifier::readMessages() {
                 perror("Message read error");
                 throw new MessageReadError();
             }
-        } else buffer->sputn(buff, charsRead);
+        } else {
+            buffer->sputn(buff, charsRead);
+            printf("%d bytes read\n", charsRead);
+        }
     } while (charsRead > 0);
     createMessages();
 }
 
 void MessageIdentifier::createMessages() {
+    printf("%d bytes in buffer\n", buffer->in_avail());
     if (lastMessage == nullptr) {
         lastMessage = createMessage(buffer);
     }
@@ -35,8 +35,4 @@ void MessageIdentifier::createMessages() {
             lastMessage = createMessage(buffer);
         } else break;
     };
-    if (buffer->in_avail() == 0) {
-        bufferInitialized = false;
-        delete buffer; // clear buffer
-    }
 }

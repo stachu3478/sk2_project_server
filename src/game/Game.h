@@ -11,6 +11,8 @@
 #include "./message/LobbyJoinedMessage.h"
 #include "./message/GameJoinedMessage.h"
 #include "./message/PlayerJoinedMessage.h"
+#include "./message/UnitMovedMessage.h"
+#include "./message/MoveUnitsMessage.h"
 
 class Game {
     public:
@@ -24,12 +26,16 @@ class Game {
     private:
         bool isReadyToStart() { return players.size() >= config.minPlayersCountToStart; };
         void start();
+        void addToGame(Player* player);
+        void kick(Player* player);
+        void broadcast(MessageOut* m);
         std::unordered_set<Player*> players;
-        bool started;
+        bool started = false;
         GameConfig config;
         int ownerCounter = 0;
         int countdownTicks;
         Map* map;
         PlayerSpawner* spawner;
         UnitFactory* factory;
+        std::unordered_set<Unit*> activeUnits;
 };

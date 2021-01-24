@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <algorithm>
+#include "../../net/Buffer.h"
 #include "../../net/Message.h"
 #include "GameMessage.h"
 
@@ -12,12 +13,13 @@ class PlayMessage : public GameMessage {
 
         std::string getNickname() { return nickname; };
 
-        void readBuffer(std::stringbuf* buffer);
-        bool isComplete() { return nicknameLengthToRead <= 0; };
+        void readBuffer(Buffer* buffer);
+        bool isComplete() { return complete; };
         void receive() { if (!ignored) callback(this); };
     private:
         std::function<void(PlayMessage*)> callback;
         std::string nickname;
-        char nicknameLengthToRead;
-        bool lengthRead;
+        bool complete = false;
+        bool lengthRead = false;
+        int nicknameLengthToRead;
 };

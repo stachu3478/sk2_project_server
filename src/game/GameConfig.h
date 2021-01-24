@@ -9,4 +9,6 @@ struct GameConfig {
     unsigned int tickTime = 50; // tick time in miliseconds
     unsigned int countdownTicks() { return countdownSeconds * 1000 / tickTime; };
     unsigned int initialUnitCount = 10;
+    unsigned int unitMoveTickColldown = 8;
+    unsigned int unitAttackTickColldown = 35;
 };
