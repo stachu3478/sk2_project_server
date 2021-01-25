@@ -23,9 +23,11 @@ void Game::addPlayer(Player* p) {
     }
     players.insert(std::pair(p->getOwnerId(), p));
     ((GameMessageIdentifier*)p->getClient()->getMessageIdentifier())->setMessageFilter(new IngameMessageFilter());
-    // TODO: add new message subscriptions and filters
     if (started) {
         addToGame(p);
+        for (auto kv : p->getUnits()) {
+            broadcast(new UnitSpawnedMessage(kv.second));
+        }
         p->emit(new GameJoinedMessage(factory->getUnits()));
     }
 }
@@ -115,7 +117,10 @@ void Game::tick() {
                         broadcast(new UnitAttackedMessage(unit, targetUnit));
                         if (targetUnit->isDead()) {
                             removeUnit(targetUnit);
-                        } else if (targetUnit->isIdle()) targetUnit->setTargetUnitId(unit->getId()); // revenge
+                        } else if (targetUnit->isIdle()) {
+                            targetUnit->setTargetUnitId(unit->getId()); // revenge
+                            activeUnits.insert(targetUnit);
+                        }
                     }
                 } else unit->setTarget(targetUnit->getPosition());
             }

@@ -17,6 +17,9 @@ void PlayMessage::readBuffer(Buffer* buffer) {
         return;
     }
     char* buff = buffer->sgetn(nicknameLengthToRead);
-    nickname += buff;
+    char* safeNickname = new char[nicknameLengthToRead + 1];
+    safeNickname[nicknameLengthToRead] = '\0';
+    for (int i = 0; i < nicknameLengthToRead; i++) safeNickname[i] = buff[i];
+    nickname += safeNickname;
     complete = true;
 }

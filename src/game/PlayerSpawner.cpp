@@ -32,5 +32,5 @@ void PlayerSpawner::spawnPlayer(Player* player) {
 void PlayerSpawner::spawnUnit(Player* player, Point* pos) {
     Unit* unit = factory->create(player->getOwnerId(), unitHitpoints, unitAttackDamage);
     map->setUnit(unit, pos);
-    // player->addUnit(unit); // not currently used
+    player->addUnit(unit);
 }

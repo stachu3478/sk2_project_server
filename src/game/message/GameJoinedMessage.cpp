@@ -5,7 +5,7 @@ GameJoinedMessage::~GameJoinedMessage() {}
 char* GameJoinedMessage::serialize() {
     char* str = new char[5 + units.size() * 14];
     str[0] = 1;
-    insertInteger(str + 1, units.size()); // TODO add real units
+    insertInteger(str + 1, units.size());
     int ptr = 5;
     for (std::pair<int, Unit*> unitPair : units) { // 14 bytes per unit
         Unit* unit = unitPair.second;

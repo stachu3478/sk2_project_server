@@ -22,6 +22,7 @@ src/game/message/MoveUnitsMessage
 src/game/message/AttackUnitsMessage
 src/game/message/UnitAttackedMessage
 src/game/message/UnitDestroyedMessage
+src/game/message/UnitSpawnedMessage
 src/game/Map
 src/game/UnitFactory
 src/game/PlayerSpawner

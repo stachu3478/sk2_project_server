@@ -15,6 +15,7 @@
 #include "./message/UnitMovedMessage.h"
 #include "./message/UnitAttackedMessage.h"
 #include "./message/UnitDestroyedMessage.h"
+#include "./message/UnitSpawnedMessage.h"
 #include "./message/MoveUnitsMessage.h"
 
 class Game {

@@ -7,18 +7,18 @@
 
 class Unit : public Positioned {
     public:
-        Unit(int id, int ownerId, int hitpoints, int attackDamage) { this->id = id; this->ownerId = ownerId; this->hitpoints = hitpoints; this->attackDamage = attackDamage; };
+        Unit(int id, int ownerId, int hitpoints, int attackDamage) { this->id = id; this->ownerId = ownerId; this->maxHitpoints = this->hitpoints = hitpoints; this->attackDamage = attackDamage; };
         virtual ~Unit() {};
 
         void setPos(Point* p, int cooldown) { setPosition(p); this->moveCooldown = cooldown; this->moved = true; };
         void setMoveCooldown(int c) { this->moveCooldown = c; this->moved = true; };
         Point* getTarget() { return target; };
-        void setTarget(Point* target) { this->target = target; moving = true; };
+        void setTarget(Point* target) { this->target->x = target->x; this->target->y = target->y; moving = true; };
         void setTargetUnitId(int targetUnitId) { this->targetUnitId = targetUnitId; attacking = true; };
         int getTargetUnitId() { return targetUnitId; };
         int getId() { return id; };
         int getOwnerId() { return ownerId; };
-        char getHitpointsPercent() { return (char) (100 * (double) hitpoints / maxHitpoints); };
+        char getHitpointsPercent() { return (char) ((100 * hitpoints) / maxHitpoints); };
         bool canMove() { return moveCooldown-- <= 0; moved = false; };
         bool canAttack() { return attackCooldown-- <= 0; };
         bool hasMoved() { bool m = moved; moved = false; return m; };
@@ -35,7 +35,7 @@ class Unit : public Positioned {
         int maxHitpoints;
         int hitpoints;
         int attackDamage;
-        Point* target;
+        Point* target = new Point(-1, -1);
         int targetUnitId;
         int moveCooldown = 0;
         int attackCooldown = 0;

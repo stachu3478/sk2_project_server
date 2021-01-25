@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <unordered_set>
 #include "Point.h"
 #include "Unit.h"
 #include "Tile.h"
@@ -20,6 +21,7 @@ class Map {
         bool isReachable(Point* p) { return isBlank(p); };
         bool moveTowards(Unit* unit, int cooldown);
     private:
+        Point* findBetterPositionOutOf(Point* p1, Point* p2);
         int width;
         int height;
         Tile*** map;

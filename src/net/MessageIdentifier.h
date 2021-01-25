@@ -21,7 +21,7 @@ class MessageIdentifier {
         virtual Message* createMessage(Buffer* buffer) = 0;
     private:
         void createMessages();
-        Message* lastMessage;
+        Message* lastMessage = nullptr;
         int fd;
         char buff[1024];
         Buffer* buffer = new Buffer();
