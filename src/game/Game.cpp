@@ -15,12 +15,13 @@ void Game::addPlayer(Player* p) {
     p->emit(m);
 
     PlayerJoinedMessage* pJoinedMessage = new PlayerJoinedMessage(p->getNickname(), p->getOwnerId());
-    for (Player* player : players) {
+    for (auto kv : players) {
+        Player* player = kv.second;
         player->emit(pJoinedMessage); // inform all players about joining p
         PlayerJoinedMessage* playerJoinedMessage = new PlayerJoinedMessage(player->getNickname(), player->getOwnerId());
         p->emit(playerJoinedMessage); // inform p about joining all players
     }
-    players.insert(p);
+    players.insert(std::pair(p->getOwnerId(), p));
     ((GameMessageIdentifier*)p->getClient()->getMessageIdentifier())->setMessageFilter(new IngameMessageFilter());
     // TODO: add new message subscriptions and filters
     if (started) {
@@ -37,13 +38,13 @@ void Game::start() {
     map = new Map(config.mapWidth, config.mapHeight);
     this->factory = new UnitFactory();
     this->spawner = new PlayerSpawner(map, factory, &config);
-    for (Player* p : players) {
-        addToGame(p);
+    for (auto kv : players) {
+        addToGame(kv.second);
     }
     started = true;
     GameJoinedMessage* m = new GameJoinedMessage(factory->getUnits());
-    for (Player* p : players) {
-        p->emit(m);
+    for (auto kv : players) {
+        kv.second->emit(m);
     }
 }
 
@@ -89,8 +90,10 @@ void Game::addToGame(Player* player) {
 
 void Game::kick(Player* player) {
     player->kick("Oszust!");
-    players.erase(player);
-    // TODO: remove banned player's units
+    players.erase(player->getOwnerId());
+    for (auto kv : player->getUnits()) {
+        removeUnit(kv.second);
+    }
 }
 
 void Game::tick() {
@@ -98,7 +101,6 @@ void Game::tick() {
         if (isReadyToStart()) start();
         return;
     }
-    std::unordered_set<Unit*> deactivatedUnits;
     for (Unit* unit : activeUnits) {
         if (unit->isMoving() || unit->isAttacking()) {
             if (unit->isAttacking()) {
@@ -109,12 +111,17 @@ void Game::tick() {
                 }
                 if (unit->getDistance(targetUnit) < config.units.maxAttackDistance) {
                     unit->stopMoving();
-                    if (unit->attack(targetUnit, config.units.attackTickColldown)) broadcast(new UnitAttackedMessage(unit, targetUnit));
+                    if (unit->attack(targetUnit, config.units.attackTickColldown)) {
+                        broadcast(new UnitAttackedMessage(unit, targetUnit));
+                        if (targetUnit->isDead()) {
+                            removeUnit(targetUnit);
+                        } else if (targetUnit->isIdle()) targetUnit->setTargetUnitId(unit->getId()); // revenge
+                    }
                 } else unit->setTarget(targetUnit->getPosition());
             }
             if (unit->isMoving()) {
                 if (map->moveTowards(unit, config.units.moveTickCooldown)) {
-                    if (unit->hasMoved()) broadcast(new UnitMovedMessage(unit)); // TODO: unit death
+                    if (unit->hasMoved()) broadcast(new UnitMovedMessage(unit));
                 } else {
                     unit->stopMoving();
                     unit->stopAttacking();
@@ -124,11 +131,24 @@ void Game::tick() {
             deactivatedUnits.insert(unit);
         }
     }
-    for (Unit* unit : deactivatedUnits) activeUnits.erase(unit);
+    for (Unit* unit : deactivatedUnits) {
+        activeUnits.erase(unit);
+        if (unit->isDead()) delete unit;
+    }
+    deactivatedUnits.clear();
 }
 
 void Game::broadcast(MessageOut* m) {
-    for (Player* p : players) {
+    for (auto kv : players) {
+        Player* p = kv.second;
         p->emit(m);
     }
+}
+
+void Game::removeUnit(Unit* unit) {
+    factory->removeUnit(unit);
+    map->unsetUnit(unit);
+    deactivatedUnits.insert(unit);
+    players.at(unit->getOwnerId())->removeUnit(unit);
+    broadcast(new UnitDestroyedMessage(unit));
 }

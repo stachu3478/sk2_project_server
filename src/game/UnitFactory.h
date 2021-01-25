@@ -15,6 +15,7 @@ class UnitFactory {
 };
         std::unordered_map<int, Unit*> getUnits() { return units; };
         Unit* getUnit(int id) { return units.at(id); };
+        void removeUnit(Unit* unit) { units.erase(unit->getId()); };
 
     private:
         int idCounter = 0;

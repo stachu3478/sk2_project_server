@@ -12,6 +12,7 @@ class Map {
 
         Unit* getUnit(Point* pos);
         void setUnit(Unit* unit, Point* pos);
+        void unsetUnit(Unit* unit) { setUnit(nullptr, unit->getPosition()); };
         int getWidth() { return width; };
         int getHeight() { return height; };
         bool isBlank(Point* p);

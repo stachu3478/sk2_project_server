@@ -2,6 +2,7 @@
 
 #include "cmath"
 #include "unordered_set"
+#include "unordered_map"
 #include "Map.h"
 #include "Player.h"
 #include "PlayerSpawner.h"
@@ -13,6 +14,7 @@
 #include "./message/PlayerJoinedMessage.h"
 #include "./message/UnitMovedMessage.h"
 #include "./message/UnitAttackedMessage.h"
+#include "./message/UnitDestroyedMessage.h"
 #include "./message/MoveUnitsMessage.h"
 
 class Game {
@@ -30,7 +32,8 @@ class Game {
         void addToGame(Player* player);
         void kick(Player* player);
         void broadcast(MessageOut* m);
-        std::unordered_set<Player*> players;
+        void removeUnit(Unit* unit);
+        std::unordered_map<int, Player*> players;
         bool started = false;
         GameConfig config;
         int ownerCounter = 0;
@@ -39,4 +42,5 @@ class Game {
         PlayerSpawner* spawner;
         UnitFactory* factory;
         std::unordered_set<Unit*> activeUnits;
+        std::unordered_set<Unit*> deactivatedUnits;
 };

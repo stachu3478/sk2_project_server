@@ -24,6 +24,8 @@ class Unit : public Positioned {
         bool hasMoved() { bool m = moved; moved = false; return m; };
         bool isMoving() { return moving; };
         bool isAttacking() { return attacking; };
+        bool isDead() { return hitpoints <= 0; };
+        bool isIdle() { return isDead() || (!isMoving() && !isAttacking()); };
         void stopMoving() { this->moving = false; };
         void stopAttacking() { this->attacking = false; };
         bool attack(Unit* unit, int cooldown);
