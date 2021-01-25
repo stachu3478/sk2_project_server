@@ -13,9 +13,9 @@ char* GameJoinedMessage::serialize() {
         ptr += 4;
         str[ptr++] = unit->getHitpointsPercent();
         str[ptr++] = unit->getOwnerId();
-        insertInteger(str + ptr, unit->getX());
+        insertInteger(str + ptr, unit->getPosition()->x);
         ptr += 4;
-        insertInteger(str + ptr, unit->getY());
+        insertInteger(str + ptr, unit->getPosition()->y);
         ptr += 4;
     }
     return str;

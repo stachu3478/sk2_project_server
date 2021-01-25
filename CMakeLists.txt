@@ -9,6 +9,7 @@ src/events/EpollController
 src/net/Server
 src/net/Client
 src/net/Buffer
+src/game/Unit
 src/game/message/messageHelper
 src/game/message/GameMessage
 src/game/message/KickMessage
@@ -18,6 +19,8 @@ src/game/message/LobbyJoinedMessage
 src/game/message/PlayerJoinedMessage
 src/game/message/UnitMovedMessage
 src/game/message/MoveUnitsMessage
+src/game/message/AttackUnitsMessage
+src/game/message/UnitAttackedMessage
 src/game/Map
 src/game/UnitFactory
 src/game/PlayerSpawner

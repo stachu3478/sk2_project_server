@@ -8,8 +8,8 @@ class UnitFactory {
         UnitFactory() {};
         virtual ~UnitFactory() {};
 
-        Unit* create(char ownerId) { // TODO: fix header code duplication
-    Unit* unit = new Unit(idCounter++, ownerId);
+        Unit* create(char ownerId, int hitpoints, int attackDamage) { // TODO: fix header code duplication
+    Unit* unit = new Unit(idCounter++, ownerId, hitpoints, attackDamage);
     units.insert(std::pair<int, Unit*>(unit->getId(), unit));
     return unit;
 };

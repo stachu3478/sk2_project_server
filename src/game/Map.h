@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include "Point.h"
 #include "Unit.h"
 #include "Tile.h"
 
@@ -9,12 +10,13 @@ class Map {
         Map(int width, int height);
         virtual ~Map();
 
-        Unit* getUnit(int xPos, int yPos);
-        void setUnit(Unit* unit, int xPos, int yPos);
+        Unit* getUnit(Point* pos);
+        void setUnit(Unit* unit, Point* pos);
         int getWidth() { return width; };
         int getHeight() { return height; };
-        bool isBlank(int xPos, int yPos);
-        bool isBound(int xPos, int yPos) { return xPos >= 0 && yPos >= 0 && xPos < width && yPos < height; };
+        bool isBlank(Point* p);
+        bool isBound(Point* p) { return p->isPositive() && p->x < width && p->y < height; };
+        bool isReachable(Point* p) { return isBlank(p); };
         bool moveTowards(Unit* unit, int cooldown);
     private:
         int width;

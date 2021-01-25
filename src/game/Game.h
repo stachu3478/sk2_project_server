@@ -12,6 +12,7 @@
 #include "./message/GameJoinedMessage.h"
 #include "./message/PlayerJoinedMessage.h"
 #include "./message/UnitMovedMessage.h"
+#include "./message/UnitAttackedMessage.h"
 #include "./message/MoveUnitsMessage.h"
 
 class Game {

@@ -36,7 +36,7 @@ void Game::start() {
     }
     map = new Map(config.mapWidth, config.mapHeight);
     this->factory = new UnitFactory();
-    this->spawner = new PlayerSpawner(map, factory, config.initialUnitCount, config.maxPlayersCountPerGame);
+    this->spawner = new PlayerSpawner(map, factory, &config);
     for (Player* p : players) {
         addToGame(p);
     }
@@ -59,10 +59,29 @@ void Game::addToGame(Player* player) {
             Unit* unit = factory->getUnit(unitIds[i]);
             if (unit == nullptr) continue;
             if (unit->getOwnerId() != player->getOwnerId()) {
-                kick(player);
+                kick(player); // Wants to use not his units
                 return;
             }
-            unit->setTarget(m->getTargetX(), m->getTargetY());
+            unit->setTarget(new Point(m->getTargetX(), m->getTargetY()));
+            activeUnits.insert(unit);
+        }
+    });
+    justCasting->onAttackUnits([this, player](AttackUnitsMessage* m){
+        int* unitIds = m->getUnitIds();
+        Unit* targetUnit = factory->getUnit(m->getTargetUnitId());
+        if (targetUnit == nullptr) return;
+        if (targetUnit->getOwnerId() == player->getOwnerId()) {
+            kick(player); // Wants to attack himself
+            return;
+        }
+        for (int i = 0; i < m->getUnitCount(); i++) {
+            Unit* unit = factory->getUnit(unitIds[i]);
+            if (unit == nullptr) continue;
+            if (unit->getOwnerId() != player->getOwnerId()) {
+                kick(player); // Wants to use not his units
+                return;
+            }
+            unit->setTargetUnitId(m->getTargetUnitId());
             activeUnits.insert(unit);
         }
     });
@@ -81,9 +100,29 @@ void Game::tick() {
     }
     std::unordered_set<Unit*> deactivatedUnits;
     for (Unit* unit : activeUnits) {
-        if (map->moveTowards(unit, config.unitMoveTickColldown)) {
-            if (unit->hasMoved()) broadcast(new UnitMovedMessage(unit));
-        } else deactivatedUnits.insert(unit);
+        if (unit->isMoving() || unit->isAttacking()) {
+            if (unit->isAttacking()) {
+                Unit* targetUnit = factory->getUnit(unit->getTargetUnitId());
+                if (targetUnit == nullptr) {
+                    unit->stopAttacking(); // TODO: choose another target?
+                    continue;
+                }
+                if (unit->getDistance(targetUnit) < config.units.maxAttackDistance) {
+                    unit->stopMoving();
+                    if (unit->attack(targetUnit, config.units.attackTickColldown)) broadcast(new UnitAttackedMessage(unit, targetUnit));
+                } else unit->setTarget(targetUnit->getPosition());
+            }
+            if (unit->isMoving()) {
+                if (map->moveTowards(unit, config.units.moveTickCooldown)) {
+                    if (unit->hasMoved()) broadcast(new UnitMovedMessage(unit)); // TODO: unit death
+                } else {
+                    unit->stopMoving();
+                    unit->stopAttacking();
+                }
+            }
+        } else {
+            deactivatedUnits.insert(unit);
+        }
     }
     for (Unit* unit : deactivatedUnits) activeUnits.erase(unit);
 }

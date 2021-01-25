@@ -1,9 +1,11 @@
 #include "PlayerSpawner.h"
 
-PlayerSpawner::PlayerSpawner(Map* map, UnitFactory* factory, int initialUnitCount, int maxClock) {
+PlayerSpawner::PlayerSpawner(Map* map, UnitFactory* factory, GameConfig* gameConfig) {
     this->map = map;
-    this->initialUnitCount = initialUnitCount;
-    this->maxClock = maxClock;
+    this->initialUnitCount = gameConfig->units.initialCount;
+    this->maxClock = gameConfig->maxPlayersCountPerGame;
+    this->unitHitpoints = gameConfig->units.hitpoints;
+    this->unitAttackDamage = gameConfig->units.attackDamage;
     this->factory = factory;
 }
 
@@ -18,18 +20,17 @@ void PlayerSpawner::spawnPlayer(Player* player) {
     int unitsToSpawn = initialUnitCount;
     while (unitsToSpawn > 0) {
         for (int i = 1; i < spawnRange * spawnRange; i++) {
-            int potencialX = spawnX + rand() % spawnRange;
-            int potencialY = spawnY + rand() % spawnRange;
-            if (!map->isBlank(potencialX, potencialY)) continue;
-            spawnUnit(player, potencialX, potencialY);
+            Point* potencialPosition = new Point(spawnX + rand() % spawnRange, spawnY + rand() % spawnRange);
+            if (!map->isBlank(potencialPosition)) continue;
+            spawnUnit(player, potencialPosition);
             if (--unitsToSpawn <= 0) break;
         }
         spawnRange++;
     }
 }
 
-void PlayerSpawner::spawnUnit(Player* player, int xPos, int yPos) {
-    Unit* unit = factory->create(player->getOwnerId());
-    map->setUnit(unit, xPos, yPos);
+void PlayerSpawner::spawnUnit(Player* player, Point* pos) {
+    Unit* unit = factory->create(player->getOwnerId(), unitHitpoints, unitAttackDamage);
+    map->setUnit(unit, pos);
     player->addUnit(unit);
 }

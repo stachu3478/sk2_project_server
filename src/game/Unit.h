@@ -2,35 +2,42 @@
 
 #include <cmath>
 #include <algorithm>
+#include "Point.h"
+#include "Positioned.h"
 
-class Unit {
+class Unit : public Positioned {
     public:
-        Unit(int id, int ownerId) { this->id = id; this->ownerId = ownerId; };
+        Unit(int id, int ownerId, int hitpoints, int attackDamage) { this->id = id; this->ownerId = ownerId; this->hitpoints = hitpoints; this->attackDamage = attackDamage; };
         virtual ~Unit() {};
 
-        void setPos(int xPos, int yPos) { this->xPos = xPos; this->yPos = yPos; };
-        void setPos(int xPos, int yPos, int cooldown) { this->xPos = xPos; this->yPos = yPos; this->moveCooldown = cooldown; this->moved = true; };
+        void setPos(Point* p, int cooldown) { setPosition(p); this->moveCooldown = cooldown; this->moved = true; };
         void setMoveCooldown(int c) { this->moveCooldown = c; this->moved = true; };
-        int getX() { return xPos; };
-        int getY() { return yPos; };
-        int getTargetX() { return targetX; };
-        int getTargetY() { return targetY; };
-        void setTarget(int xPos, int yPos) { this->targetX = xPos; this->targetY = yPos; };
+        Point* getTarget() { return target; };
+        void setTarget(Point* target) { this->target = target; moving = true; };
+        void setTargetUnitId(int targetUnitId) { this->targetUnitId = targetUnitId; attacking = true; };
+        int getTargetUnitId() { return targetUnitId; };
         int getId() { return id; };
         int getOwnerId() { return ownerId; };
-        char getHitpointsPercent() { return 100; };
+        char getHitpointsPercent() { return (char) (100 * (double) hitpoints / maxHitpoints); };
         bool canMove() { return moveCooldown-- <= 0; moved = false; };
         bool canAttack() { return attackCooldown-- <= 0; };
-        int getDistanceTo(int x, int y) { return std::max(abs(xPos - x), abs(yPos - y)); };
         bool hasMoved() { bool m = moved; moved = false; return m; };
+        bool isMoving() { return moving; };
+        bool isAttacking() { return attacking; };
+        void stopMoving() { this->moving = false; };
+        void stopAttacking() { this->attacking = false; };
+        bool attack(Unit* unit, int cooldown);
     private:
         int id;
         int ownerId;
-        int xPos;
-        int yPos;
-        int targetX;
-        int targetY;
+        int maxHitpoints;
+        int hitpoints;
+        int attackDamage;
+        Point* target;
+        int targetUnitId;
         int moveCooldown = 0;
         int attackCooldown = 0;
         bool moved = false;
+        bool moving = false;
+        bool attacking = false;
 };

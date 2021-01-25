@@ -14,37 +14,35 @@ Map::Map(int width, int height) {
 
 Map::~Map() {}
 
-void Map::setUnit(Unit* unit, int xPos, int yPos) {
-    Tile* tile = this->map[xPos][yPos];
-    if (tile == nullptr) this->map[xPos][yPos] = new Tile(unit);
+void Map::setUnit(Unit* unit, Point* pos) {
+    Tile* tile = this->map[pos->x][pos->y];
+    if (tile == nullptr) this->map[pos->x][pos->y] = new Tile(unit);
     else tile->setUnit(unit);
-    if (unit != nullptr) unit->setPos(xPos, yPos);
+    if (unit != nullptr) unit->setPosition(pos);
 }
 
-Unit* Map::getUnit(int xPos, int yPos) {
-    Tile* tile = this->map[xPos][yPos];
+Unit* Map::getUnit(Point* pos) {
+    Tile* tile = this->map[pos->x][pos->y];
     if (tile == nullptr) return nullptr;
     return tile->getUnit();
 }
 
-bool Map::isBlank(int xPos, int yPos) {
-    if (isBound(xPos, yPos)) return getUnit(xPos, yPos) == nullptr;
+bool Map::isBlank(Point* pos) {
+    if (isBound(pos)) return getUnit(pos) == nullptr;
     return false;
 }
 
 bool Map::moveTowards(Unit* unit, int cooldown) {
     if (!unit->canMove()) return true;
-    int xPos = unit->getTargetX();
-    int yPos = unit->getTargetY();
-    int bestDistance = hypot(unit->getX() - xPos, abs(unit->getY() - yPos));
+    Point* target = unit->getTarget();
+    int bestDistance = unit->getDistance(target);
     int bestOffsetX;
     int bestOffsetY;
     bool found = false;
     for (int offsetX = -1; offsetX <= 1; offsetX++) {
         for (int offsetY = -1; offsetY <= 1; offsetY++) {
-            if (!isBound(unit->getX() + offsetX, unit->getY() + offsetY)
-            || !isBlank(unit->getX() + offsetX, unit->getY() + offsetY) ) continue;
-            int distance = hypot(unit->getX() - xPos + offsetX, unit->getY() - yPos + offsetY);
+            if (!isReachable(new Point(unit->getPosition(), offsetX, offsetY))) continue;
+            int distance = unit->getDistance(new Point(target, -offsetX, -offsetY));
             if (distance >= bestDistance) continue;
             bestOffsetX = offsetX;
             bestOffsetY = offsetY;
@@ -53,8 +51,8 @@ bool Map::moveTowards(Unit* unit, int cooldown) {
         }
     }
     if (found) {
-        setUnit(nullptr, unit->getX(), unit->getY());
-        setUnit(unit, unit->getX() + bestOffsetX, unit->getY() + bestOffsetY);
+        setUnit(nullptr, unit->getPosition());
+        setUnit(unit, new Point(unit->getPosition(), bestOffsetX, bestOffsetY));
         unit->setMoveCooldown(cooldown);
         return true;
     }
