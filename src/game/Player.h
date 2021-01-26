@@ -19,7 +19,6 @@ class Player {
         void emit(MessageOut* m);
         void setOwnerId(int id) { this->ownerId = id; };
         int getOwnerId() { return this->ownerId; };
-        void setIngame(bool ingame);
 
         void addUnit(Unit* unit) { this->units.insert(std::pair<int, Unit*>(unit->getId(), unit)); };
         void removeUnit(Unit* unit) { removeUnit(unit->getId()); };

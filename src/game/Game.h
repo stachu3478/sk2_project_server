@@ -30,6 +30,7 @@ class Game {
         bool isFull() { return players.size() >= config.maxPlayersCountPerGame; };
         bool canJoin(Player* p) { return !bannedPlayers.contains(p); };
         void addPlayer(Player* p);
+        void onChangeGame(std::function<void(Player*)> cb) { changeGameCallback = cb; };
     private:
         bool isReadyToStart() { return players.size() >= config.minPlayersCountToStart; };
         void start();
@@ -49,4 +50,5 @@ class Game {
         UnitFactory* factory;
         std::unordered_set<Unit*> activeUnits;
         std::unordered_set<Unit*> deactivatedUnits;
+        std::function<void(Player*)> changeGameCallback;
 };

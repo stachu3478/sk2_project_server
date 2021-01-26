@@ -23,6 +23,7 @@ class GameController {
         void tick();
         void addPlayer(Player* p);
         void assignPlayer(PlayMessage* m);
+        void assignPlayer(Player* p);
         std::unordered_set<Game*> games;
         Game* lastGame;
         std::unordered_set<Player*> players;

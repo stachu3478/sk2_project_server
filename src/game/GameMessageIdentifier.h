@@ -25,6 +25,7 @@ class GameMessageIdentifier : public MessageIdentifier {
         void onMoveUnits(std::function<void(MoveUnitsMessage*)> cb) { this->moveUnitsCallback = cb; };
         void onAttackUnits(std::function<void(AttackUnitsMessage*)> cb) { this->attackUnitsCallback = cb; };
         void onLeaveGame(std::function<void(SimpleMessage*)> cb) { this->leaveGameCallback = cb; };
+        void onChangeGame(std::function<void(SimpleMessage*)> cb) { this->changeGameCallback = cb; };
 
         void setUnitBatchSize(int size) { maxUnitBatchSize = size; };
 
@@ -34,6 +35,7 @@ class GameMessageIdentifier : public MessageIdentifier {
         std::function<void(MoveUnitsMessage*)> moveUnitsCallback;
         std::function<void(AttackUnitsMessage*)> attackUnitsCallback;
         std::function<void(SimpleMessage*)> leaveGameCallback;
+        std::function<void(SimpleMessage*)> changeGameCallback;
         int maxUnitBatchSize = 0;
         MessageFilter* filter;
         Player* player;

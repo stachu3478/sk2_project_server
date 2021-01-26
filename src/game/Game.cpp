@@ -100,6 +100,11 @@ void Game::addToGame(Player* player) {
         _->ignore();
         removePlayer(player);
     });
+    justCasting->onChangeGame([this, player](SimpleMessage* _){
+        _->ignore();
+        removePlayer(player);
+        changeGameCallback(player);
+    });
 }
 
 void Game::kick(Player* player) {

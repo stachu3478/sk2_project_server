@@ -61,13 +61,20 @@ void GameController::assignPlayer(PlayMessage* m) {
     Player* player = m->getPlayer();
     player->setNickname(nick);
     printf("%s joined the game\n", nick.c_str());
+    assignPlayer(player);
+}
+
+void GameController::assignPlayer(Player* p) {
     for (Game* game : games) {
-        if (!game->isFull() && game->canJoin(player)) {
-            game->addPlayer(player);
+        if (!game->isFull() && game->canJoin(p)) {
+            game->addPlayer(p);
             return;
         }
     }
     lastGame = new Game(config);
     games.insert(lastGame);
-    lastGame->addPlayer(player);
+    lastGame->addPlayer(p);
+    lastGame->onChangeGame([this](Player* player) {
+        assignPlayer(player);
+    });
 }
