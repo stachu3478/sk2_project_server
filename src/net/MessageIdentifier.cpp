@@ -15,7 +15,7 @@ void MessageIdentifier::readMessages() {
                 perror("Message read error");
                 throw new MessageReadError();
             }
-        } else {
+        } else if (charsRead > 0) {
             buffer->sputn(buff, charsRead);
             printf("%d bytes read\n", charsRead);
         }
@@ -24,7 +24,6 @@ void MessageIdentifier::readMessages() {
 }
 
 void MessageIdentifier::createMessages() {
-    printf("%d bytes in buffer\n", buffer->in_avail());
     if (lastMessage == nullptr) {
         lastMessage = createMessage(buffer);
     }

@@ -13,6 +13,7 @@ class Player {
 
         Client* getClient() { return client; };
         
+        bool isOffline() { return client == nullptr; };
         void kick(const char* reason);
         bool isIll() { return ill; };
         void emit(MessageOut* m);

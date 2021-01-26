@@ -8,6 +8,14 @@ Game::Game(GameConfig config) {
 
 Game::~Game() {}
 
+bool Game::isFinished() {
+    if (!started) return false;
+    for (auto p : players) {
+        if (p.second->isOffline()) return false;
+    }
+    return true;
+}
+
 void Game::addPlayer(Player* p) {
     p->setOwnerId(ownerCounter++);
 
@@ -88,14 +96,24 @@ void Game::addToGame(Player* player) {
             activeUnits.insert(unit);
         }
     });
+    justCasting->onLeaveGame([this, player](SimpleMessage* _){
+        _->ignore();
+        removePlayer(player);
+    });
 }
 
 void Game::kick(Player* player) {
+    removePlayer(player);
     player->kick("Oszust!");
-    players.erase(player->getOwnerId());
-    for (auto kv : player->getUnits()) {
+}
+
+void Game::removePlayer(Player* p) {
+    for (auto kv : p->getUnits()) {
         removeUnit(kv.second);
     }
+    players.erase(p->getOwnerId());
+    bannedPlayers.insert(p);
+    p->emit(new GameLeftMessage());
 }
 
 void Game::tick() {

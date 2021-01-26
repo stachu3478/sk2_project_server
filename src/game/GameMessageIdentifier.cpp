@@ -9,6 +9,7 @@ Message* GameMessageIdentifier::createMessage(Buffer* buffer) {
     if (messageType == 0 && playCallback != nullptr) m = new PlayMessage(this->playCallback);
     else if (messageType == 2 && moveUnitsCallback != nullptr) m = new MoveUnitsMessage(this->moveUnitsCallback, maxUnitBatchSize);
     else if (messageType == 3 && attackUnitsCallback != nullptr) m = new AttackUnitsMessage(this->attackUnitsCallback, maxUnitBatchSize);
+    else if (messageType == 4 && leaveGameCallback != nullptr) m = new SimpleMessage(this->leaveGameCallback);
     // else if blablabla
     // ... more message type verifies
     else {

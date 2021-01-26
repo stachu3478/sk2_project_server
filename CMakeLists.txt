@@ -11,6 +11,7 @@ src/net/Client
 src/net/Buffer
 src/game/Unit
 src/game/message/messageHelper
+src/game/message/SimpleMessageOut
 src/game/message/GameMessage
 src/game/message/KickMessage
 src/game/message/PlayMessage

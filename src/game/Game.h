@@ -9,6 +9,8 @@
 #include "GameConfig.h"
 #include "GameMessageIdentifier.h"
 #include "IngameMessageFilter.h"
+#include "./message/SimpleMessage.h"
+#include "./message/SimpleMessageOut.h"
 #include "./message/LobbyJoinedMessage.h"
 #include "./message/GameJoinedMessage.h"
 #include "./message/PlayerJoinedMessage.h"
@@ -24,17 +26,20 @@ class Game {
         virtual ~Game();
 
         void tick();
-        bool isFinished() { return false; };
+        bool isFinished();
         bool isFull() { return players.size() >= config.maxPlayersCountPerGame; };
+        bool canJoin(Player* p) { return !bannedPlayers.contains(p); };
         void addPlayer(Player* p);
     private:
         bool isReadyToStart() { return players.size() >= config.minPlayersCountToStart; };
         void start();
         void addToGame(Player* player);
+        void removePlayer(Player* p);
         void kick(Player* player);
         void broadcast(MessageOut* m);
         void removeUnit(Unit* unit);
         std::unordered_map<int, Player*> players;
+        std::unordered_set<Player*> bannedPlayers;
         bool started = false;
         GameConfig config;
         int ownerCounter = 0;
