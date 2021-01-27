@@ -16,7 +16,7 @@
 
 ### Build:
 - Run command: `cmake --build ./build`
-- Executable file should appear such at `./build/sk2_project_server` path
+- Executable file should appear such at `./build/main` path
 
 ## Run tests:
 - In `build` directory
