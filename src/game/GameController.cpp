@@ -3,16 +3,23 @@
 GameController::GameController() {
     server = new Server();
     server->setClientCallback([this](Client* c){
-        printf("Client callback called\n");
         this->addPlayer(new Player(c));
     });
+    logger->log("Starting server...");
 }
 
 GameController::~GameController() {
+    delete logger;
     delete server;
     for (Game* g : games) {
         delete g;
     }
+}
+
+void GameController::stop(std::function<void()> callback) {
+    logger->log("Closing server...");
+    logger->finalize();
+    server->shutdown(callback);
 }
 
 void GameController::start() {
@@ -34,7 +41,7 @@ void GameController::tick() {
     }
     for (Player* p : players) {
         if (p->isIll()) {
-            printf("Ill player, removing...\n");
+            logger->log(std::string("Ill player, removing... Nickname: ") + p->getNickname());
             players.erase(p);
             delete p;
         }
@@ -60,7 +67,7 @@ void GameController::assignPlayer(PlayMessage* m) {
     std::string nick = m->getNickname();
     Player* player = m->getPlayer();
     player->setNickname(nick);
-    printf("%s joined the game\n", nick.c_str());
+    logger->log(nick + " joined the game");
     assignPlayer(player);
 }
 
@@ -71,7 +78,7 @@ void GameController::assignPlayer(Player* p) {
             return;
         }
     }
-    lastGame = new Game(config);
+    lastGame = new Game(config, logger);
     games.insert(lastGame);
     lastGame->addPlayer(p);
     lastGame->onChangeGame([this](Player* player) {

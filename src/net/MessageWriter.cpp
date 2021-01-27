@@ -36,7 +36,7 @@ void MessageWriter::writeMessages() {
             perror("write");
             currentWritten = 0;
         } else if (currentWritten > 0) {
-            printf("%d bytes written\n", currentWritten);
+            // printf("%d bytes written\n", currentWritten);
             readPos += currentWritten;
         }
     } while (writePos - readPos > 0 && currentWritten > 0);

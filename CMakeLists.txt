@@ -9,6 +9,7 @@ src/events/EpollController
 src/net/Server
 src/net/Client
 src/net/Buffer
+src/game/Logger
 src/game/Unit
 src/game/message/messageHelper
 src/game/message/SimpleMessageOut
