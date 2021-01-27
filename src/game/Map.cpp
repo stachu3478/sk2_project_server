@@ -84,3 +84,46 @@ Point* Map::findBetterPositionOutOf(Point* p0, Point* p2) {
     }
     return nullptr;
 }
+
+Unit* Map::findUnitInRangeByOwnerId(Point* pos, int ownerId, int range) {
+    Unit* foundUnit = nullptr;
+    rangeIterator(pos, range, [this, ownerId, &foundUnit](Unit* unit) {
+        if (unit->getOwnerId() == ownerId) {
+            foundUnit = unit;
+            return false;
+        }
+        return true;
+    });
+    return foundUnit;
+}
+
+std::unordered_set<Unit*> Map::findUnitsInRangeByOwnerId(Positioned* entity, int ownerId, int range) {
+    Point* pos = entity->getPosition();
+    std::unordered_set<Unit*> foundUnits;
+    rangeIterator(pos, range, [this, ownerId, &foundUnits](Unit* unit) {
+        if (unit->getOwnerId() == ownerId) foundUnits.insert(unit);
+        return true;
+    });
+    return foundUnits;
+}
+
+void Map::rangeIterator(Point* p, int range, std::function<bool(Unit*)> callback) {
+    Point* pos = new Point(p->x, p->y);
+    int xDir = 1;
+    int yDir = 0;
+    float toChange = 0.5;
+    for (int i = 0; i <= range * 4; i++) {
+        for (float j = 0; j < toChange; j++) {
+            pos->x += xDir;
+            pos->y += yDir;
+            if (!isBound(pos)) continue;
+            Unit* unit = getUnit(pos);
+            if (unit == nullptr) continue;
+            if (!callback(unit)) return;
+        }
+        const int prevX = xDir;
+        xDir = yDir;
+        yDir = -prevX;
+        toChange += 0.5;
+    }
+}
