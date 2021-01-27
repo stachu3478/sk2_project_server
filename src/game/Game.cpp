@@ -19,6 +19,7 @@ bool Game::isFinished() {
 
 void Game::addPlayer(Player* p) {
     p->setOwnerId(ownerCounter++);
+    p->setScore(0);
 
     LobbyJoinedMessage* m = new LobbyJoinedMessage(config, p->getOwnerId(), countdownTicks * config.tickTime / 1000);
     p->emit(m);
@@ -113,6 +114,7 @@ void Game::addToGame(Player* player) {
 void Game::kick(Player* player) {
     removePlayer(player);
     player->kick("Oszust!");
+    //metoda do skreślenia gracza
 }
 
 void Game::removePlayer(Player* p) {
@@ -124,6 +126,7 @@ void Game::removePlayer(Player* p) {
     p->emit(new GameLeftMessage());
     ((GameMessageIdentifier*)p->getClient()->getMessageIdentifier())->setMessageFilter(new NewPlayerMessageFilter());
     broadcast(new PlayerLeftMessage(p->getOwnerId()));
+    //metoda do skreślenia gracza
 }
 
 void Game::tick() {
@@ -157,6 +160,9 @@ void Game::tick() {
                     broadcast(new UnitAttackedMessage(unit, targetUnit));
                     if (targetUnit->isDead()) {
                         removeUnit(targetUnit); // death act
+                        int ownerid = unit->getOwnerId();
+                        players.at(ownerid)->addScore(10);
+                        //metoda dodaje punkty getOwnerId(unit)
                     } else if (targetUnit->isIdle()) {
                         for (Unit* avenger : map->findUnitsInRangeByOwnerId(targetUnit, targetUnit->getOwnerId(), config.units.maxAttackDistance)) {
                             if (avenger->isIdle()) {
