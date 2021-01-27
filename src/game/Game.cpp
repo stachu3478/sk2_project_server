@@ -86,6 +86,7 @@ void Game::addToGame(Player* player) {
                 kick(player); // Wants to use not his units
                 return;
             }
+            unit->stopAttacking();
             unit->setTarget(new Point(m->getTargetX(), m->getTargetY()));
             activeUnits.insert(unit);
         }
