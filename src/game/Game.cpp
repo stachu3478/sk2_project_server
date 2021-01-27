@@ -11,7 +11,7 @@ Game::~Game() {}
 bool Game::isFinished() {
     if (!started) return false;
     for (auto p : players) {
-        if (p.second->isOffline()) return false;
+        if (!p.second->isOffline()) return false;
     }
     return true;
 }
@@ -38,6 +38,17 @@ void Game::addPlayer(Player* p) {
         }
         p->emit(new GameJoinedMessage(factory->getUnits()));
     }
+    Client* client = p->getClient();
+    GameMessageIdentifier* justCasting = (GameMessageIdentifier*)client->getMessageIdentifier();
+    justCasting->onLeaveGame([this, p](SimpleMessage* _){
+        _->ignore();
+        removePlayer(p);
+    });
+    justCasting->onChangeGame([this, p](SimpleMessage* _){
+        _->ignore();
+        removePlayer(p);
+        changeGameCallback(p);
+    });
 }
 
 void Game::start() {
@@ -96,15 +107,6 @@ void Game::addToGame(Player* player) {
             activeUnits.insert(unit);
         }
     });
-    justCasting->onLeaveGame([this, player](SimpleMessage* _){
-        _->ignore();
-        removePlayer(player);
-    });
-    justCasting->onChangeGame([this, player](SimpleMessage* _){
-        _->ignore();
-        removePlayer(player);
-        changeGameCallback(player);
-    });
 }
 
 void Game::kick(Player* player) {
@@ -116,14 +118,17 @@ void Game::removePlayer(Player* p) {
     for (auto kv : p->getUnits()) {
         removeUnit(kv.second);
     }
-    players.erase(p->getOwnerId());
+    if (players.size() > 0) players.erase(p->getOwnerId());
     bannedPlayers.insert(p);
     p->emit(new GameLeftMessage());
+    ((GameMessageIdentifier*)p->getClient()->getMessageIdentifier())->setMessageFilter(new NewPlayerMessageFilter());
+    broadcast(new PlayerLeftMessage(p->getOwnerId()));
 }
 
 void Game::tick() {
     if (!started) {
         if (isReadyToStart()) start();
+        else countdownTicks = config.countdownTicks();
         return;
     }
     for (Unit* unit : activeUnits) {
