@@ -6,6 +6,8 @@
 #include <chrono>
 #include <functional>
 #include <signal.h>
+#include <cerrno>
+#include <cstdio>
 #include "EpollListener.h"
 
 class PollingError : std::exception {};
