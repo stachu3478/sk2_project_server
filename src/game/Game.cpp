@@ -112,6 +112,7 @@ void Game::addToGame(Player* player) {
 void Game::kick(Player* player) {
     removePlayer(player);
     player->kick("Oszust!");
+    //metoda do skreślenia gracza
 }
 
 void Game::removePlayer(Player* p) {
@@ -123,6 +124,7 @@ void Game::removePlayer(Player* p) {
     p->emit(new GameLeftMessage());
     ((GameMessageIdentifier*)p->getClient()->getMessageIdentifier())->setMessageFilter(new NewPlayerMessageFilter());
     broadcast(new PlayerLeftMessage(p->getOwnerId()));
+    //metoda do skreślenia gracza
 }
 
 void Game::tick() {
@@ -148,6 +150,7 @@ void Game::tick() {
                         } else if (targetUnit->isIdle()) {
                             targetUnit->setTargetUnitId(unit->getId()); // revenge
                             activeUnits.insert(targetUnit);
+                            //metoda dodaje punkty getOwnerId(unit)
                         }
                     }
                 } else unit->setTarget(targetUnit->getPosition());
