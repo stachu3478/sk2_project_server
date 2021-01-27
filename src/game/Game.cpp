@@ -19,6 +19,7 @@ bool Game::isFinished() {
 
 void Game::addPlayer(Player* p) {
     p->setOwnerId(ownerCounter++);
+    p->setScore(0);
 
     LobbyJoinedMessage* m = new LobbyJoinedMessage(config, p->getOwnerId(), countdownTicks * config.tickTime / 1000);
     p->emit(m);
@@ -148,10 +149,12 @@ void Game::tick() {
                         broadcast(new UnitAttackedMessage(unit, targetUnit));
                         if (targetUnit->isDead()) {
                             removeUnit(targetUnit);
+                            int ownerid = unit->getOwnerId();
+                            players.at(ownerid)->addScore(10);
+                            //metoda dodaje punkty getOwnerId(unit)
                         } else if (targetUnit->isIdle()) {
                             targetUnit->setTargetUnitId(unit->getId()); // revenge
                             activeUnits.insert(targetUnit);
-                            //metoda dodaje punkty getOwnerId(unit)
                         }
                     }
                 } else unit->setTarget(targetUnit->getPosition());

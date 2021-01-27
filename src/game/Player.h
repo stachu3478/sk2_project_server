@@ -20,6 +20,10 @@ class Player {
         void setOwnerId(int id) { this->ownerId = id; };
         int getOwnerId() { return this->ownerId; };
 
+        void setScore(int wynik){this->score = wynik;};
+        int getScore(){return score;};
+        void addScore(int add){this->score += add;};
+    
         void addUnit(Unit* unit) { this->units.insert(std::pair<int, Unit*>(unit->getId(), unit)); };
         void removeUnit(Unit* unit) { removeUnit(unit->getId()); };
         void removeUnit(int id) { this->units.erase(id); };
@@ -33,5 +37,6 @@ class Player {
         Client* client;
         bool ill;
         int ownerId;
+        int score;
         std::unordered_map<int, Unit*> units;
 };
