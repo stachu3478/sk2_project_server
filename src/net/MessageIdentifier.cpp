@@ -17,7 +17,7 @@ void MessageIdentifier::readMessages() {
             }
         } else if (charsRead > 0) {
             buffer->sputn(buff, charsRead);
-            printf("%d bytes read\n", charsRead);
+            // printf("%d bytes read\n", charsRead);
         }
     } while (charsRead > 0);
     createMessages();

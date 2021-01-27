@@ -1,9 +1,10 @@
 #include "Game.h"
 
-Game::Game(GameConfig config) {
+Game::Game(GameConfig config, Logger* logger) {
     this->config = config;
     this->countdownTicks = config.countdownTicks();
-    printf("Creating new game...\n");
+    this->logger = logger;
+    logger->log("Creating new game...");
 }
 
 Game::~Game() {}

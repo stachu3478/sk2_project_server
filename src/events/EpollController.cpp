@@ -9,12 +9,10 @@ void EpollController::addListener(EpollListener* l) {
     e.events = EPOLLIN;
     e.data.ptr = l;
     epoll_ctl(fd, EPOLL_CTL_ADD, l->getFd(), &e);
-    printf("ctl added\n");
 }
 
 void EpollController::removeListener(EpollListener* l) {
     epoll_ctl(fd, EPOLL_CTL_DEL, l->getFd(), nullptr);
-    printf("ctl removed\n");
 }
 
 void EpollController::listen(int miliseconds) {
@@ -23,7 +21,7 @@ void EpollController::listen(int miliseconds) {
         epoll_event* evts = events.data();
         int nFds = epoll_wait(fd, evts, events.size(), std::chrono::duration_cast<std::chrono::milliseconds>(stopTime - std::chrono::system_clock::now()).count());
         if (nFds == -1) {
-            if (errno == EINTR) printf("SIGINT received, stopping\n");
+            if (errno == EINTR) printf("EINTR received, stopping\n");
             else {
                 perror("epoll_wait");
                 throw new PollingError();
@@ -44,7 +42,6 @@ void EpollController::listen(int miliseconds) {
         }
     };
     if (shouldClose) { // FIXME: Invalid use of member function
-        printf("Polling closed\n");
         closeCallback();
     }
 }

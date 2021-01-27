@@ -19,7 +19,7 @@ class EpollController {
         void close(std::function<void(void)> callback);
     private:
         int fd;
-        bool shouldClose;
+        bool shouldClose = false;
         std::function<void(void)> closeCallback;
         std::array<struct epoll_event, 32> events;
 };

@@ -5,7 +5,6 @@
 
 GameController* server;
 void ctrl_c(int) {
-    std::cout << "Server shutting down...\n";
     server->stop([](){
         exit(0);
     });

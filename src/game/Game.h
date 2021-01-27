@@ -10,6 +10,7 @@
 #include "GameMessageIdentifier.h"
 #include "IngameMessageFilter.h"
 #include "NewPlayerMessageFilter.h"
+#include "Logger.h"
 #include "./message/SimpleMessage.h"
 #include "./message/SimpleMessageOut.h"
 #include "./message/LobbyJoinedMessage.h"
@@ -24,7 +25,7 @@
 
 class Game {
     public:
-        Game(GameConfig config);
+        Game(GameConfig config, Logger* logger);
         virtual ~Game();
 
         void tick();
@@ -53,4 +54,5 @@ class Game {
         std::unordered_set<Unit*> activeUnits;
         std::unordered_set<Unit*> deactivatedUnits;
         std::function<void(Player*)> changeGameCallback;
+        Logger* logger;
 };
