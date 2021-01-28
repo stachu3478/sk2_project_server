@@ -36,14 +36,8 @@ void GameController::tick() {
     for (Game* g : games) {
         g->tick();
         if (g->isFinished()) {
+            g->finish();
             finishedGames.insert(g);
-        }
-    }
-    for (Player* p : players) {
-        if (p->isIll()) {
-            logger->log(std::string("Ill player, removing... Nickname: ") + p->getNickname());
-            players.erase(p);
-            delete p;
         }
     }
     for (Game* g : finishedGames) {
@@ -57,6 +51,11 @@ void GameController::addPlayer(Player* player) {
     GameMessageIdentifier* messageIdentifier = new GameMessageIdentifier(player);
     messageIdentifier->onPlay([this](PlayMessage* m){
         this->assignPlayer(m);
+    });
+    messageIdentifier->onInvalidMessage([this, player]() {
+        logger->log(std::string(player->getNickname()) + " sent invalid message");
+        player->kick("Invalid message");
+        removePlayer(player);
     });
     messageIdentifier->setMessageFilter(new NewPlayerMessageFilter());
     Client* client = player->getClient();
@@ -84,4 +83,16 @@ void GameController::assignPlayer(Player* p) {
     lastGame->onChangeGame([this](Player* player) {
         assignPlayer(player);
     });
+    lastGame->onPlayerRemoved([this](Player* player) {
+        if (player->getClient() != nullptr) return;
+        removePlayer(player);
+    });
+}
+
+void GameController::removePlayer(Player* p) {
+    for (Game* g : games) {
+        g->removePlayer(p);
+    }
+    players.erase(p);
+    logger->log(std::string(p->getNickname()) + " left the game");
 }

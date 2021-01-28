@@ -15,7 +15,6 @@ class Player {
         
         bool isOffline() { return client == nullptr; };
         void kick(const char* reason);
-        bool isIll() { return ill; };
         void emit(MessageOut* m);
         void setOwnerId(int id) { this->ownerId = id; };
         int getOwnerId() { return this->ownerId; };
@@ -35,7 +34,6 @@ class Player {
     private:
         std::string nickname;
         Client* client;
-        bool ill;
         int ownerId;
         int score;
         std::unordered_map<int, Unit*> units;

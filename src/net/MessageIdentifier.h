@@ -16,7 +16,7 @@ class MessageIdentifier {
         virtual ~MessageIdentifier();
 
         void setFd(int fd) { this->fd = fd; };
-        void readMessages();
+        int readMessages();
     protected:
         virtual Message* createMessage(Buffer* buffer) = 0;
     private:

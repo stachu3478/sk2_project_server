@@ -33,7 +33,7 @@ void Client::emit(MessageOut* m) {
 int Client::getFd() { return fd; }
 
 void Client::triggerIn() {
-    messageIdentifier->readMessages();
+    if (messageIdentifier->readMessages() == 0) disconnect();
 }
 
 void Client::triggerOut() {

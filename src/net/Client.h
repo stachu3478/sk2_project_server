@@ -22,6 +22,7 @@ class Client : public EpollListener {
         void triggerIn();
         void triggerOut();
         void error();
+        void closed() { disconnect(); };
     private:
         int fd;
         MessageIdentifier* messageIdentifier;

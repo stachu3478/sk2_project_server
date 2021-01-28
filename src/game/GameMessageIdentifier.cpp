@@ -14,7 +14,7 @@ Message* GameMessageIdentifier::createMessage(Buffer* buffer) {
     // else if blablabla
     // ... more message type verifies
     else {
-        player->kick("Internal server error");
+        invalidMessageCallback();
         return nullptr;
     };
     m->setPlayer(player);

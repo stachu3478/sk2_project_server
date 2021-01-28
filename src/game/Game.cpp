@@ -123,14 +123,18 @@ void Game::kick(Player* player) {
 }
 
 void Game::removePlayer(Player* p) {
+    if (!players.contains(p->getOwnerId())) return;
     for (auto kv : p->getUnits()) {
         removeUnit(kv.second);
     }
     if (players.size() > 0) players.erase(p->getOwnerId());
     bannedPlayers.insert(p);
-    p->emit(new GameLeftMessage());
-    ((GameMessageIdentifier*)p->getClient()->getMessageIdentifier())->setMessageFilter(new NewPlayerMessageFilter());
+    if (!p->isOffline()) {
+        ((GameMessageIdentifier*)p->getClient()->getMessageIdentifier())->setMessageFilter(new NewPlayerMessageFilter());
+        p->emit(new GameLeftMessage());
+    }
     broadcast(new PlayerLeftMessage(p->getOwnerId()));
+    removePlayerCallback(p);
     //metoda do skreślenia gracza
 }
 

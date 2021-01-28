@@ -8,4 +8,5 @@ class EpollListener {
         virtual void triggerIn() = 0;
         void triggerOut() {};
         virtual void error() = 0;
+        void closed(){};
 };

@@ -31,15 +31,17 @@ class Game {
 
         void tick();
         bool isFinished();
+        void finish() { for (auto kv : players) removePlayer(kv.second); };
         bool isFull() { return players.size() >= config.maxPlayersCountPerGame; };
         bool canJoin(Player* p) { return !bannedPlayers.contains(p); };
         void addPlayer(Player* p);
         void onChangeGame(std::function<void(Player*)> cb) { changeGameCallback = cb; };
+        void onPlayerRemoved(std::function<void(Player*)> cb) { removePlayerCallback = cb; };
+        void removePlayer(Player* p);
     private:
         bool isReadyToStart() { return players.size() >= config.minPlayersCountToStart; };
         void start();
         void addToGame(Player* player);
-        void removePlayer(Player* p);
         void kick(Player* player);
         void broadcast(MessageOut* m);
         void removeUnit(Unit* unit);
@@ -54,6 +56,7 @@ class Game {
         UnitFactory* factory;
         std::unordered_set<Unit*> activeUnits;
         std::unordered_set<Unit*> deactivatedUnits;
+        std::function<void(Player*)> removePlayerCallback;
         std::function<void(Player*)> changeGameCallback;
         Logger* logger;
 };
