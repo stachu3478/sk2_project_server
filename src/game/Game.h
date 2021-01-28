@@ -22,6 +22,7 @@
 #include "./message/UnitDestroyedMessage.h"
 #include "./message/UnitSpawnedMessage.h"
 #include "./message/MoveUnitsMessage.h"
+#include "./message/PlayersScoreChangedMessage.h"
 
 class Game {
     public:

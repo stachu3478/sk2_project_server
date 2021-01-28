@@ -76,6 +76,10 @@ void Game::addToGame(Player* player) {
     Client* client = player->getClient();
     if (client == nullptr) return; // network disconnected player counts to the game
     GameMessageIdentifier* justCasting = (GameMessageIdentifier*)client->getMessageIdentifier();
+    for (auto v: players)
+    {
+        player->emit(new PlayersScoreChangedMessage (v.second));
+    }    
     justCasting->setUnitBatchSize(1000); // idk
     justCasting->onMoveUnits([this, player](MoveUnitsMessage* m){
         int* unitIds = m->getUnitIds();
@@ -150,7 +154,9 @@ void Game::tick() {
                         if (targetUnit->isDead()) {
                             removeUnit(targetUnit);
                             int ownerid = unit->getOwnerId();
-                            players.at(ownerid)->addScore(10);
+                            Player* scorer = players.at(ownerid);
+                            scorer->addScore(10);
+                            broadcast(new PlayersScoreChangedMessage(scorer));
                             //metoda dodaje punkty getOwnerId(unit)
                         } else if (targetUnit->isIdle()) {
                             targetUnit->setTargetUnitId(unit->getId()); // revenge

@@ -5,10 +5,11 @@
 #include "../Unit.h"
 #include "../../net/MessageOut.h"
 #include "messageHelper.h"
+#include "../Player.h"
 
 class PlayersScoreChangedMessage : public MessageOut {
     public:
-        PlayersScoreChangedMessage(Player* player) {};
+        PlayersScoreChangedMessage(Player* player) {ownerId = player->getOwnerId(); score = player->getScore();};
         virtual ~PlayersScoreChangedMessage();
 
         char* serialize();
