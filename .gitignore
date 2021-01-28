@@ -2,6 +2,8 @@
 .cmake
 sk2_project_server
 
+config.txt
+log.txt
 build
 CMakeLists.txt.user
 CMakeCache.txt
