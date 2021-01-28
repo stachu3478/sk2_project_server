@@ -2,7 +2,7 @@
 
 #include "exception"
 
-// FUCK YOU, std::stringbuf!
+// POOR YOU, std::stringbuf!
 class Buffer {
     public:
         Buffer(){};
