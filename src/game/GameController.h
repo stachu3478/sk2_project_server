@@ -21,7 +21,7 @@ class GameController {
 
         void start();
         void stop(std::function<void()> callback);
-        void setServerPort(int port) { portConfig = port; };
+        void setServerPort(int port) { config.port = port; };
     private:
         void tick();
         void addPlayer(Player* p);
@@ -30,7 +30,6 @@ class GameController {
         std::unordered_set<Game*> games;
         Game* lastGame;
         std::unordered_set<Player*> players;
-        int portConfig = 34780;
         GameConfig config;
         Server* server;
         Logger* logger = new Logger("log.txt");

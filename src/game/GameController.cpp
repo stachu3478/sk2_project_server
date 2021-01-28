@@ -23,7 +23,7 @@ void GameController::stop(std::function<void()> callback) {
 }
 
 void GameController::start() {
-    server->listenAt(portConfig);
+    server->listenAt(config.port);
     server->setEpollController(new EpollController());
     while (server->isAlive()) {
         server->listenFor(50); // TODO: reduce lag by counting delayed time

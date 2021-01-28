@@ -17,7 +17,7 @@ struct GameUnitConfig
 
 struct GameConfig {
     GameConfig();
-    unsigned int port;
+    unsigned int port = 34780;
     unsigned int maxPlayersCountPerGame = 4;
     unsigned int minPlayersCountToStart = 2;
     unsigned int mapWidth = 100;
