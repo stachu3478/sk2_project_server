@@ -16,7 +16,7 @@ void AttackUnitsMessage::readBuffer(Buffer* buffer) {
         if ((bytesAvailable -= 8) < 0) return;
         targetUnitId = readInteger(buffer);
         unitCount = unitCountToRead = readInteger(buffer);
-        if (unitCountToRead > maxBatchSize) { // No way guy TODO: make better error callback
+        if (unitCountToRead > maxBatchSize || unitCountToRead < 1) { // No way guy TODO: make better error callback
             complete = true;
             return;
         }

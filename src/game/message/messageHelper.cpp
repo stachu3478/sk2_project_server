@@ -17,9 +17,9 @@ void insertInteger(char* str, int v) {
 
 int readInteger(Buffer* buff) {
     int val = 0;
-    val += buff->sbumpc() >> 24;
-    val += buff->sbumpc() >> 16;
-    val += buff->sbumpc() >> 8;
-    val += buff->sbumpc() >> 0;
+    val |= (unsigned char)buff->sbumpc() << 24;
+    val |= (unsigned char)buff->sbumpc() << 16;
+    val |= (unsigned char)buff->sbumpc() << 8;
+    val |= (unsigned char)buff->sbumpc() << 0;
     return val;
 }

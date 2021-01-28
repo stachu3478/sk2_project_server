@@ -20,7 +20,7 @@ void PlayerSpawner::spawnPlayer(Player* player) {
     int unitsToSpawn = initialUnitCount;
     while (unitsToSpawn > 0) {
         for (int i = 1; i < spawnRange * spawnRange; i++) {
-            Point* potencialPosition = new Point(spawnX + rand() % spawnRange, spawnY + rand() % spawnRange);
+            Point* potencialPosition = new Point(spawnX + rand() % spawnRange - spawnRange / 2, spawnY + rand() % spawnRange - spawnRange / 2);
             if (!map->isBlank(potencialPosition)) continue;
             spawnUnit(player, potencialPosition);
             if (--unitsToSpawn <= 0) break;
