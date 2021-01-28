@@ -21,7 +21,7 @@ class GameController {
 
         void start();
         void stop(std::function<void()> callback);
-        void setServerPort(int port) { config.port = port; };
+        void setServerPort(int port) { if (port != 0) config.port = port; else logger->log(std::string("Invalid port specified (the port will remain the same): ") + std::to_string(port)); };
     private:
         void tick();
         void addPlayer(Player* p);
