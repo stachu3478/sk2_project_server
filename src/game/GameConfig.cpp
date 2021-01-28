@@ -37,10 +37,8 @@ GameConfig::GameConfig() {
     } else {
         // load
         std::ifstream file(FILENAME);
-        std::string keyLine;
         std::string valueLine;
-        while (std::getline(file, keyLine)) {
-            if (!std::getline(file, valueLine)) continue;
+        while (std::getline(file, valueLine)) {
             if (valueLine == "Server port:") file >> port;
             if (valueLine == "Max players count per game:") file >> maxPlayersCountPerGame;
             if (valueLine == "Min players count to start:") file >> minPlayersCountToStart;
