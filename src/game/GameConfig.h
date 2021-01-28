@@ -1,5 +1,10 @@
 #pragma once
 
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fstream>
+#include <string>
+
 struct GameUnitConfig
 {
     unsigned int initialCount = 10;
@@ -11,6 +16,8 @@ struct GameUnitConfig
 };
 
 struct GameConfig {
+    GameConfig();
+    unsigned int port;
     unsigned int maxPlayersCountPerGame = 4;
     unsigned int minPlayersCountToStart = 2;
     unsigned int mapWidth = 100;
