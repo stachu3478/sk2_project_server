@@ -3,5 +3,6 @@
 void Logger::log(std::string str) {
     auto currTime = std::time(nullptr);
     char* textDate = std::ctime(&currTime);
-    file << textDate << 0xef << " " << str << "\n";
+    textDate[std::strlen(textDate) - 1] = ' ';
+    file << "[" << textDate << "] " << str << "\n";
 }
