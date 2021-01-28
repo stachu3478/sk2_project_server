@@ -5,6 +5,7 @@
 ## Usage:
 
 ### Requirements:
+- Unix environment (any that supports epoll)
 - CMake - minimum version 3.0.0
 - GCC compiler - version 9.3.0
 
