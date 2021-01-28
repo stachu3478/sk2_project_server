@@ -14,8 +14,9 @@ class Unit : public Positioned {
         void setMoveCooldown(int c) { this->moveCooldown = c; this->moved = true; };
         Point* getTarget() { return target; };
         void setTarget(Point* target) { this->target->x = target->x; this->target->y = target->y; moving = true; };
-        void setTargetUnitId(int targetUnitId) { this->targetUnitId = targetUnitId; attacking = true; };
+        void setTargetUnit(Unit* unit) { this->targetUnitId = unit->getId(); targetOwnerId = unit->getOwnerId(); setTarget(unit->getPosition()); attacking = true; };
         int getTargetUnitId() { return targetUnitId; };
+        int getTargetUnitOwnerId() { return targetOwnerId; };
         int getId() { return id; };
         int getOwnerId() { return ownerId; };
         char getHitpointsPercent() { return (char) ((100 * hitpoints) / maxHitpoints); };
@@ -37,6 +38,7 @@ class Unit : public Positioned {
         int attackDamage;
         Point* target = new Point(-1, -1);
         int targetUnitId;
+        int targetOwnerId;
         int moveCooldown = 0;
         int attackCooldown = 0;
         bool moved = false;

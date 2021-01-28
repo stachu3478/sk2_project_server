@@ -2,7 +2,9 @@
 
 #include <cmath>
 #include <unordered_set>
+#include <functional>
 #include "Point.h"
+#include "Positioned.h"
 #include "Unit.h"
 #include "Tile.h"
 
@@ -20,8 +22,11 @@ class Map {
         bool isBound(Point* p) { return p->isPositive() && p->x < width && p->y < height; };
         bool isReachable(Point* p) { return isBlank(p); };
         bool moveTowards(Unit* unit, int cooldown);
+        Unit* findUnitInRangeByOwnerId(Point* pos, int ownerId, int range);
+        std::unordered_set<Unit*> findUnitsInRangeByOwnerId(Positioned* entity, int ownerId, int range);
     private:
         Point* findBetterPositionOutOf(Point* p1, Point* p2);
+        void rangeIterator(Point* p, int range, std::function<bool(Unit*)> callback);
         int width;
         int height;
         Tile*** map;

@@ -90,6 +90,7 @@ void Game::addToGame(Player* player) {
                 kick(player); // Wants to use not his units
                 return;
             }
+            unit->stopAttacking();
             unit->setTarget(new Point(m->getTargetX(), m->getTargetY()));
             activeUnits.insert(unit);
         }
@@ -109,7 +110,7 @@ void Game::addToGame(Player* player) {
                 kick(player); // Wants to use not his units
                 return;
             }
-            unit->setTargetUnitId(m->getTargetUnitId());
+            unit->setTargetUnit(targetUnit);
             activeUnits.insert(unit);
         }
     });
@@ -139,43 +140,58 @@ void Game::tick() {
         else countdownTicks = config.countdownTicks();
         return;
     }
+    std::unordered_set<Unit*> toBeActivated;
     for (Unit* unit : activeUnits) {
-        if (unit->isMoving() || unit->isAttacking()) {
-            if (unit->isAttacking()) {
-                Unit* targetUnit = factory->getUnit(unit->getTargetUnitId());
-                if (targetUnit == nullptr) {
-                    unit->stopAttacking(); // TODO: choose another target?
+        if (unit->isIdle()) {
+            deactivatedUnits.insert(unit);
+            continue;
+        }
+        if (unit->isAttacking()) {
+            Unit* targetUnit = factory->getUnit(unit->getTargetUnitId());
+            if (targetUnit == nullptr) {
+                Unit* anotherTarget = map->findUnitInRangeByOwnerId(unit->getPosition(), unit->getTargetUnitOwnerId(), config.units.maxAttackDistance);
+                if (anotherTarget != nullptr) {
+                    unit->setTargetUnit(anotherTarget); // choose another target near him
                     continue;
                 }
-                if (unit->getDistance(targetUnit) < config.units.maxAttackDistance) {
-                    unit->stopMoving();
-                    if (unit->attack(targetUnit, config.units.attackTickColldown)) {
-                        broadcast(new UnitAttackedMessage(unit, targetUnit));
-                        if (targetUnit->isDead()) {
-                            removeUnit(targetUnit);
-                            int ownerid = unit->getOwnerId();
-                            Player* scorer = players.at(ownerid);
-                            scorer->addScore(10);
-                            broadcast(new PlayersScoreChangedMessage(scorer));
-                            //metoda dodaje punkty getOwnerId(unit)
-                        } else if (targetUnit->isIdle()) {
-                            targetUnit->setTargetUnitId(unit->getId()); // revenge
-                            activeUnits.insert(targetUnit);
+                anotherTarget = map->findUnitInRangeByOwnerId(unit->getTarget(), unit->getTargetUnitOwnerId(), config.units.maxAttackDistance);
+                if (anotherTarget != nullptr) unit->setTargetUnit(anotherTarget); // choose another target near last target
+                else unit->stopAttacking(); 
+                continue;
+            }
+            if (unit->getDistance(targetUnit) < config.units.maxAttackDistance) {
+                unit->stopMoving();
+                if (unit->attack(targetUnit, config.units.attackTickColldown)) {
+                    broadcast(new UnitAttackedMessage(unit, targetUnit));
+                    if (targetUnit->isDead()) {
+                        removeUnit(targetUnit); // death act
+                        int ownerid = unit->getOwnerId();
+                        Player* scorer = players.at(ownerid);
+                        scorer->addScore(10);
+                        broadcast(new PlayersScoreChangedMessage(scorer));
+                        //metoda dodaje punkty getOwnerId(unit)
+                    } else if (targetUnit->isIdle()) {
+                        for (Unit* avenger : map->findUnitsInRangeByOwnerId(targetUnit, targetUnit->getOwnerId(), config.units.maxAttackDistance)) {
+                            if (avenger->isIdle()) {
+                                avenger->setTargetUnit(unit); // revenge
+                                toBeActivated.insert(avenger);
+                            }
                         }
                     }
-                } else unit->setTarget(targetUnit->getPosition());
-            }
-            if (unit->isMoving()) {
-                if (map->moveTowards(unit, config.units.moveTickCooldown)) {
-                    if (unit->hasMoved()) broadcast(new UnitMovedMessage(unit));
-                } else {
-                    unit->stopMoving();
-                    unit->stopAttacking();
                 }
-            }
-        } else {
-            deactivatedUnits.insert(unit);
+            } else unit->setTarget(targetUnit->getPosition());
         }
+        if (unit->isMoving()) {
+            if (map->moveTowards(unit, config.units.moveTickCooldown)) {
+                if (unit->hasMoved()) broadcast(new UnitMovedMessage(unit));
+            } else {
+                unit->stopMoving();
+                unit->stopAttacking();
+            }
+        }
+    }
+    for (Unit* unit : toBeActivated) {
+        activeUnits.insert(unit);
     }
     for (Unit* unit : deactivatedUnits) {
         activeUnits.erase(unit);
