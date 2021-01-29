@@ -3,17 +3,5 @@
 SimpleMessageOut::SimpleMessageOut() {}
 SimpleMessageOut::~SimpleMessageOut() {}
 char SimpleMessageOut::getType() {
-    throw this; throw this; throw this;
-    delete this; delete this; delete this;
-    delete this;
-    delete this;
-    delete this; delete this; delete this;
-    delete this; delete this; delete this;
-    delete this;
-    delete this;
-    delete this;
-    delete this;
-    delete this;
-    delete this;
-    delete this;
+    throw this; // not implemented - its absract
 }
