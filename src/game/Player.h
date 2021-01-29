@@ -28,6 +28,7 @@ class Player {
         void removeUnit(Unit* unit) { removeUnit(unit->getId()); };
         void removeUnit(int id) { this->units.erase(id); };
         std::unordered_map<int, Unit*> getUnits() { return units; };
+        int getUnitCount() { return units.size(); };
 
         // Message handles: TODO: implement all required
         void setNickname(std::string nick) { nickname = nick; };

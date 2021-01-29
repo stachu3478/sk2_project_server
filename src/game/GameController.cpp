@@ -71,7 +71,7 @@ void GameController::assignPlayer(Player* p, PlayMessage* m) {
 
 void GameController::assignPlayer(Player* p) {
     for (Game* game : games) {
-        if (!game->isFull() && game->canJoin(p)) {
+        if (game->canJoin(p)) {
             game->addPlayer(p);
             return;
         }

@@ -17,6 +17,17 @@ bool Game::isFinished() {
     return true;
 }
 
+bool Game::hasWinner() {
+    bool livingPlayer = false;
+    for (auto p : players) {
+        if (p.second->getUnitCount() > 0) {
+            if (livingPlayer) return false;
+            livingPlayer = true;
+        }
+    }
+    return livingPlayer;
+}
+
 void Game::addPlayer(Player* p) {
     p->setOwnerId(ownerCounter++);
     p->setScore(0);
