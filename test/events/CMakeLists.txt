@@ -1,3 +1,0 @@
-add_executable(EpollController EpollControllerTest.h)
-target_link_libraries(EpollController gtest_main)
-add_test(NAME EpollControllerTest COMMAND EpollController)
