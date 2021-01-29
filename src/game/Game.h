@@ -31,7 +31,7 @@ class Game {
 
         void tick();
         bool isFinished();
-        void finish() { for (auto kv : players) removePlayer(kv.second); };
+        void finish() { for (auto kv : players) removePlayerStuff(kv.second); players.clear(); };
         bool isFull() { return players.size() >= config.maxPlayersCountPerGame; };
         bool canJoin(Player* p) { return !bannedPlayers.contains(p); };
         void addPlayer(Player* p);
@@ -39,6 +39,7 @@ class Game {
         void onPlayerRemoved(std::function<void(Player*)> cb) { removePlayerCallback = cb; };
         void removePlayer(Player* p);
     private:
+        void removePlayerStuff(Player* p);
         bool isReadyToStart() { return players.size() >= config.minPlayersCountToStart; };
         void start();
         void addToGame(Player* player);

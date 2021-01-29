@@ -5,19 +5,17 @@
 #include <functional>
 #include "../net/Buffer.h"
 #include "../net/MessageIdentifier.h"
-#include "../net/Message.h"
 #include "./message/SimpleMessage.h"
 #include "./message/PlayMessage.h"
 #include "./message/MoveUnitsMessage.h"
 #include "./message/AttackUnitsMessage.h"
 #include "MessageFilter.h"
-#include "Player.h"
 
 class InvalidMessageError : public std::exception {};
 
 class GameMessageIdentifier : public MessageIdentifier {
     public:
-        GameMessageIdentifier(Player* p) { player = p; };
+        GameMessageIdentifier() { };
         virtual ~GameMessageIdentifier();
 
         void setMessageFilter(MessageFilter* f) { filter = f; };
@@ -40,5 +38,4 @@ class GameMessageIdentifier : public MessageIdentifier {
         std::function<void()> invalidMessageCallback;
         int maxUnitBatchSize = 0;
         MessageFilter* filter;
-        Player* player;
 };

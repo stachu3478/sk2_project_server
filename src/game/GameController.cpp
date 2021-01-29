@@ -26,7 +26,7 @@ void GameController::start() {
     server->listenAt(config.port);
     server->setEpollController(new EpollController());
     while (server->isAlive()) {
-        server->listenFor(50); // TODO: reduce lag by counting delayed time
+        server->listenFor(config.tickTime); // TODO: reduce lag by counting delayed time
         tick();
     }
 }
@@ -48,9 +48,9 @@ void GameController::tick() {
 
 void GameController::addPlayer(Player* player) {
     players.insert(player);
-    GameMessageIdentifier* messageIdentifier = new GameMessageIdentifier(player);
-    messageIdentifier->onPlay([this](PlayMessage* m){
-        this->assignPlayer(m);
+    GameMessageIdentifier* messageIdentifier = new GameMessageIdentifier();
+    messageIdentifier->onPlay([this, player](PlayMessage* m){
+        this->assignPlayer(player, m);
     });
     messageIdentifier->onInvalidMessage([this, player]() {
         logger->log(std::string(player->getNickname()) + " sent invalid message");
@@ -62,12 +62,11 @@ void GameController::addPlayer(Player* player) {
     client->setMessageIdentifier(messageIdentifier);
 }
 
-void GameController::assignPlayer(PlayMessage* m) {
+void GameController::assignPlayer(Player* p, PlayMessage* m) {
     std::string nick = m->getNickname();
-    Player* player = m->getPlayer();
-    player->setNickname(nick);
+    p->setNickname(nick);
     logger->log(nick + " joined the game");
-    assignPlayer(player);
+    assignPlayer(p);
 }
 
 void GameController::assignPlayer(Player* p) {

@@ -25,7 +25,7 @@ class GameController {
     private:
         void tick();
         void addPlayer(Player* p);
-        void assignPlayer(PlayMessage* m);
+        void assignPlayer(Player* p, PlayMessage* m);
         void assignPlayer(Player* p);
         void removePlayer(Player* p);
         std::unordered_set<Game*> games;

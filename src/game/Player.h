@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include "message/KickMessage.h"
 #include "../net/Client.h"
+#include "GameMessageIdentifier.h"
 #include "Unit.h"
 
 class Player {
@@ -23,7 +24,7 @@ class Player {
         int getScore(){return score;};
         void addScore(int add){this->score += add;};
     
-        void addUnit(Unit* unit) { this->units.insert(std::pair<int, Unit*>(unit->getId(), unit)); };
+        void addUnit(Unit* unit);
         void removeUnit(Unit* unit) { removeUnit(unit->getId()); };
         void removeUnit(int id) { this->units.erase(id); };
         std::unordered_map<int, Unit*> getUnits() { return units; };

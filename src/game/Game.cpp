@@ -79,8 +79,7 @@ void Game::addToGame(Player* player) {
     for (auto v: players)
     {
         player->emit(new PlayersScoreChangedMessage (v.second));
-    }    
-    justCasting->setUnitBatchSize(1000); // idk
+    }
     justCasting->onMoveUnits([this, player](MoveUnitsMessage* m){
         int* unitIds = m->getUnitIds();
         for (int i = 0; i < m->getUnitCount(); i++) {
@@ -124,10 +123,14 @@ void Game::kick(Player* player) {
 
 void Game::removePlayer(Player* p) {
     if (!players.contains(p->getOwnerId())) return;
+    if (players.size() > 0) players.erase(p->getOwnerId());
+    removePlayerStuff(p);
+}
+
+void Game::removePlayerStuff(Player* p) {
     for (auto kv : p->getUnits()) {
         removeUnit(kv.second);
     }
-    if (players.size() > 0) players.erase(p->getOwnerId());
     bannedPlayers.insert(p);
     if (!p->isOffline()) {
         ((GameMessageIdentifier*)p->getClient()->getMessageIdentifier())->setMessageFilter(new NewPlayerMessageFilter());

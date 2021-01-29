@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "../../net/Buffer.h"
 #include "../../net/Message.h"
 #include "GameMessage.h"
