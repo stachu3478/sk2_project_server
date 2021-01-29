@@ -18,7 +18,8 @@ void MessageWriter::emit(MessageOut* m) {
         for (int i = 0; i < m->length(); i++) {
             newBuffer[writePos++] = messageString[i];
         }
-        delete buffer;
+        delete[] messageString;
+        delete[] buffer;
         buffer = newBuffer;
     } else {
         buffer = messageString;
@@ -41,7 +42,7 @@ void MessageWriter::writeMessages() {
         }
     } while (writePos - readPos > 0 && currentWritten > 0);
     if (writePos == readPos) {
-        delete buffer;
+        delete[] buffer;
         bufferAllocated = false;
     }
 }

@@ -15,6 +15,7 @@ class PollingError : std::exception {};
 class EpollController {
     public:
         EpollController();
+        virtual ~EpollController(){};
         void addListener(EpollListener* l);
         void removeListener(EpollListener* l);
         void listen(int miliseconds = -1);

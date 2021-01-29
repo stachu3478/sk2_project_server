@@ -7,7 +7,7 @@ AttackUnitsMessage::AttackUnitsMessage(std::function<void(AttackUnitsMessage*)> 
 }
 
 AttackUnitsMessage::~AttackUnitsMessage() {
-    delete unitIds;
+    delete[] unitIds;
 }
 
 void AttackUnitsMessage::readBuffer(Buffer* buffer) {

@@ -7,7 +7,7 @@ MoveUnitsMessage::MoveUnitsMessage(std::function<void(MoveUnitsMessage*)> cb, in
 }
 
 MoveUnitsMessage::~MoveUnitsMessage() {
-    delete unitIds;
+    delete[] unitIds;
 }
 
 void MoveUnitsMessage::readBuffer(Buffer* buffer) {

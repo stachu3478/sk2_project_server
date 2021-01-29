@@ -8,7 +8,7 @@
 #include "../net/ClientCallback.h"
 #include "../events/EpollController.h"
 #include "GameConfig.h"
-#include "NewPlayerMessageFilter.h"
+#include "MessageFilter.h"
 #include "GameMessageIdentifier.h"
 #include "Game.h"
 #include "Player.h"
@@ -21,7 +21,7 @@ class GameController {
 
         void start();
         void stop(std::function<void()> callback);
-        void setServerPort(int port) { if (port != 0) config.port = port; else logger->log(std::string("Invalid port specified (the port will remain the same): ") + std::to_string(port)); };
+        void setServerPort(int port) { if (port != 0) config.port = port; else logger.log(std::string("Invalid port specified (the port will remain the same): ") + std::to_string(port)); };
     private:
         void tick();
         void addPlayer(Player* p);
@@ -29,9 +29,8 @@ class GameController {
         void assignPlayer(Player* p);
         void removePlayer(Player* p);
         std::unordered_set<Game*> games;
-        Game* lastGame;
         std::unordered_set<Player*> players;
         GameConfig config;
-        Server* server;
-        Logger* logger = new Logger("log.txt");
+        Server server;
+        Logger logger{"log.txt"};
 };

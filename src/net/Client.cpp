@@ -1,13 +1,11 @@
 #include "Client.h"
 
-Client::Client(int fd) {
+Client::Client(int fd) : messageWriter{fd} {
     this->fd = fd;
-    this->messageWriter = new MessageWriter(fd);
 }
 
 Client::~Client() {
     delete messageIdentifier;
-    delete messageWriter;
 }
 
 void Client::disconnect() {
@@ -26,8 +24,8 @@ void Client::onDisconnection(std::function<void()> c) {
 }
 
 void Client::emit(MessageOut* m) {
-    messageWriter->emit(m);
-    messageWriter->writeMessages(); // TODO: handle unavailable writes
+    messageWriter.emit(m);
+    messageWriter.writeMessages(); // TODO: handle unavailable writes
 }
 
 int Client::getFd() { return fd; }
@@ -37,7 +35,7 @@ void Client::triggerIn() {
 }
 
 void Client::triggerOut() {
-    messageWriter->writeMessages();
+    messageWriter.writeMessages();
 }
 
 void Client::error() {

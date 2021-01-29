@@ -7,7 +7,10 @@ Game::Game(GameConfig config, Logger* logger) {
     logger->log("Creating new game...");
 }
 
-Game::~Game() {}
+Game::~Game() {
+    delete factory;
+    delete spawner;
+}
 
 bool Game::isFinished() {
     if (!started) return false;
@@ -32,32 +35,34 @@ void Game::addPlayer(Player* p) {
     p->setOwnerId(ownerCounter++);
     p->setScore(0);
 
-    LobbyJoinedMessage* m = new LobbyJoinedMessage(config, p->getOwnerId(), countdownTicks * config.tickTime / 1000);
-    p->emit(m);
+    LobbyJoinedMessage m(config, p->getOwnerId(), countdownTicks * config.tickTime / 1000);
+    p->emit(&m);
 
-    PlayerJoinedMessage* pJoinedMessage = new PlayerJoinedMessage(p->getNickname(), p->getOwnerId());
+    PlayerJoinedMessage pJoinedMessage(p->getNickname(), p->getOwnerId());
     for (auto kv : players) {
         Player* player = kv.second;
-        player->emit(pJoinedMessage); // inform all players about joining p
-        PlayerJoinedMessage* playerJoinedMessage = new PlayerJoinedMessage(player->getNickname(), player->getOwnerId());
-        p->emit(playerJoinedMessage); // inform p about joining all players
+        player->emit(&pJoinedMessage); // inform all players about joining p
+        PlayerJoinedMessage playerJoinedMessage(player->getNickname(), player->getOwnerId());
+        p->emit(&playerJoinedMessage); // inform p about joining all players
     }
     players.insert(std::pair(p->getOwnerId(), p));
-    ((GameMessageIdentifier*)p->getClient()->getMessageIdentifier())->setMessageFilter(new IngameMessageFilter());
+    ((GameMessageIdentifier*)p->getClient()->getMessageIdentifier())->setMessageFilter(ingameMessageFilter);
     if (started) {
         addToGame(p);
         for (auto kv : p->getUnits()) {
-            broadcast(new UnitSpawnedMessage(kv.second));
+            UnitSpawnedMessage m(kv.second);
+            broadcast(&m);
         }
-        p->emit(new GameJoinedMessage(factory->getUnits()));
+        GameJoinedMessage m(factory->getUnits());
+        p->emit(&m);
     }
     Client* client = p->getClient();
-    GameMessageIdentifier* justCasting = (GameMessageIdentifier*)client->getMessageIdentifier();
-    justCasting->onLeaveGame([this, p](SimpleMessage* _){
+    GameMessageIdentifier* gameMessageIdentifier = (GameMessageIdentifier*)client->getMessageIdentifier();
+    gameMessageIdentifier->onLeaveGame([this, p](SimpleMessage* _){
         _->ignore();
         removePlayer(p);
     });
-    justCasting->onChangeGame([this, p](SimpleMessage* _){
+    gameMessageIdentifier->onChangeGame([this, p](SimpleMessage* _){
         _->ignore();
         removePlayer(p);
         changeGameCallback(p);
@@ -76,9 +81,9 @@ void Game::start() {
         addToGame(kv.second);
     }
     started = true;
-    GameJoinedMessage* m = new GameJoinedMessage(factory->getUnits());
+    GameJoinedMessage m(factory->getUnits());
     for (auto kv : players) {
-        kv.second->emit(m);
+        kv.second->emit(&m);
     }
 }
 
@@ -86,12 +91,13 @@ void Game::addToGame(Player* player) {
     spawner->spawnPlayer(player);
     Client* client = player->getClient();
     if (client == nullptr) return; // network disconnected player counts to the game
-    GameMessageIdentifier* justCasting = (GameMessageIdentifier*)client->getMessageIdentifier();
+    GameMessageIdentifier* gameMessageIdentifier = (GameMessageIdentifier*)client->getMessageIdentifier();
     for (auto v: players)
     {
-        player->emit(new PlayersScoreChangedMessage (v.second));
+        PlayersScoreChangedMessage m(v.second);
+        player->emit(&m);
     }
-    justCasting->onMoveUnits([this, player](MoveUnitsMessage* m){
+    gameMessageIdentifier->onMoveUnits([this, player](MoveUnitsMessage* m){
         int* unitIds = m->getUnitIds();
         for (int i = 0; i < m->getUnitCount(); i++) {
             Unit* unit = factory->getUnit(unitIds[i]);
@@ -105,7 +111,7 @@ void Game::addToGame(Player* player) {
             activeUnits.insert(unit);
         }
     });
-    justCasting->onAttackUnits([this, player](AttackUnitsMessage* m){
+    gameMessageIdentifier->onAttackUnits([this, player](AttackUnitsMessage* m){
         int* unitIds = m->getUnitIds();
         Unit* targetUnit = factory->getUnit(m->getTargetUnitId());
         if (targetUnit == nullptr) return;
@@ -139,13 +145,15 @@ void Game::removePlayer(Player* p) {
 }
 
 void Game::removePlayerStuff(Player* p) {
+    GameLeftMessage gameLeftMessage;
+    PlayerLeftMessage playerLeftMessage(p->getOwnerId());
     removeAllUnits(p);
     bannedPlayers.insert(p);
     if (!p->isOffline()) {
-        ((GameMessageIdentifier*)p->getClient()->getMessageIdentifier())->setMessageFilter(new NewPlayerMessageFilter());
-        p->emit(new GameLeftMessage());
+        ((GameMessageIdentifier*)p->getClient()->getMessageIdentifier())->setMessageFilter(newPlayerMessageFilter);
+        p->emit(&gameLeftMessage);
     }
-    broadcast(new PlayerLeftMessage(p->getOwnerId()));
+    broadcast(&playerLeftMessage);
     removePlayerCallback(p);
     //metoda do skreślenia gracza
 }
@@ -178,13 +186,15 @@ void Game::tick() {
             if (unit->getDistance(targetUnit) < config.units.maxAttackDistance) {
                 unit->stopMoving();
                 if (unit->attack(targetUnit, config.units.attackTickColldown)) {
-                    broadcast(new UnitAttackedMessage(unit, targetUnit));
+                    UnitAttackedMessage m(unit, targetUnit);
+                    broadcast(&m);
                     if (targetUnit->isDead()) {
                         removeUnit(targetUnit); // death act
                         int ownerid = unit->getOwnerId();
                         Player* scorer = players.at(ownerid);
                         scorer->addScore(10);
-                        broadcast(new PlayersScoreChangedMessage(scorer));
+                        PlayersScoreChangedMessage mScore(scorer);
+                        broadcast(&mScore);
                         //metoda dodaje punkty getOwnerId(unit)
                     } else if (targetUnit->isIdle()) {
                         for (Unit* avenger : map->findUnitsInRangeByOwnerId(targetUnit, targetUnit->getOwnerId(), config.units.maxAttackDistance)) {
@@ -199,7 +209,8 @@ void Game::tick() {
         }
         if (unit->isMoving()) {
             if (map->moveTowards(unit, config.units.moveTickCooldown)) {
-                if (unit->hasMoved()) broadcast(new UnitMovedMessage(unit));
+                UnitMovedMessage m(unit);
+                if (unit->hasMoved()) broadcast(&m);
             } else {
                 unit->stopMoving();
                 unit->stopAttacking();

@@ -31,11 +31,13 @@ void Server::listenAt(int port) {
         throw new ConnectException();
     }
     alive = true;
+    epollController.addListener(this);
     printf("Listening on *:%d\n", port);
 }
 
 void Server::shutdown(std::function<void(void)> callback) {
-    epollController->close([this, callback]() {
+    epollController.removeListener(this);
+    epollController.close([this, callback]() {
         this->closeAll();
         callback();
     });
@@ -53,7 +55,7 @@ void Server::closeAll() {
 
 void Server::clientDisconnected(Client* c) {
     clients.erase(c);
-    epollController->removeListener(c);
+    epollController.removeListener(c);
 }
 
 void Server::triggerIn() {
@@ -68,7 +70,7 @@ void Server::triggerIn() {
         throw new ConnectException();
     }
     Client* client = new Client(clientFd);
-    epollController->addListener(client);
+    epollController.addListener(client);
     clients.insert(client);
     client->onDisconnection([this, client]{
         this->clientDisconnected(client);

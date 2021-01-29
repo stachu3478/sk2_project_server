@@ -17,6 +17,6 @@ Message* GameMessageIdentifier::createMessage(Buffer* buffer) {
         invalidMessageCallback();
         return nullptr;
     };
-    if (filter->shouldIgnore(messageType)) m->ignore();
+    if (filter(messageType)) m->ignore();
     return m;
 }

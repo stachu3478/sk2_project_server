@@ -26,10 +26,9 @@ class Server : public EpollListener {
         
         bool isAlive() { return alive; };
         void listenAt(int port);
-        void listenFor(int miliseconds) { epollController->listen(miliseconds); };
+        void listenFor(int miliseconds) { epollController.listen(miliseconds); };
         void shutdown(std::function<void(void)> callback);
         void setClientCallback(std::function<void(Client*)> c) { clientCallback = c; };
-        void setEpollController(EpollController* e) { epollController = e; e->addListener(this); };
         void clientDisconnected(Client* c);
 
         int getFd() { return sockFd; };
@@ -41,7 +40,7 @@ class Server : public EpollListener {
         int sockFd;
         std::function<void(Client*)> clientCallback;
         std::unordered_set<Client*> clients;
-        EpollController* epollController;
+        EpollController epollController;
         std::function<void()> closeCallback;
         void closeAll();
 };

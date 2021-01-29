@@ -25,7 +25,7 @@ class Map {
         Unit* findUnitInRangeByOwnerId(Point* pos, int ownerId, int range);
         std::unordered_set<Unit*> findUnitsInRangeByOwnerId(Positioned* entity, int ownerId, int range);
     private:
-        Point* findBetterPositionOutOf(Point* p1, Point* p2);
+        Point findBetterPositionOutOf(Point* p1, Point* p2);
         void rangeIterator(Point* p, int range, std::function<bool(Unit*)> callback);
         int width;
         int height;

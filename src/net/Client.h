@@ -26,6 +26,6 @@ class Client : public EpollListener {
     private:
         int fd;
         MessageIdentifier* messageIdentifier;
-        MessageWriter* messageWriter;
+        MessageWriter messageWriter;
         std::function<void()> disconnectionCallback;
 };

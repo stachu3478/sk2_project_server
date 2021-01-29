@@ -18,7 +18,7 @@ class GameMessageIdentifier : public MessageIdentifier {
         GameMessageIdentifier() { };
         virtual ~GameMessageIdentifier();
 
-        void setMessageFilter(MessageFilter* f) { filter = f; };
+        void setMessageFilter(std::function<bool(char)> f) { filter = f; };
         void onPlay(std::function<void(PlayMessage*)> cb) { this->playCallback = cb; };
         void onMoveUnits(std::function<void(MoveUnitsMessage*)> cb) { this->moveUnitsCallback = cb; };
         void onAttackUnits(std::function<void(AttackUnitsMessage*)> cb) { this->attackUnitsCallback = cb; };
@@ -37,5 +37,5 @@ class GameMessageIdentifier : public MessageIdentifier {
         std::function<void(SimpleMessage*)> changeGameCallback;
         std::function<void()> invalidMessageCallback;
         int maxUnitBatchSize = 0;
-        MessageFilter* filter;
+        std::function<bool(char)> filter;
 };

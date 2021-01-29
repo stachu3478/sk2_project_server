@@ -1,6 +1,4 @@
 #pragma once
 
-class MessageFilter {
-    public:
-        virtual bool shouldIgnore(char messageId) = 0;
-};
+bool newPlayerMessageFilter(char messageType);
+bool ingameMessageFilter(char messageType);

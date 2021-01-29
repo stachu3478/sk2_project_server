@@ -12,7 +12,12 @@ Map::Map(int width, int height) {
     }
 }
 
-Map::~Map() {}
+Map::~Map() {
+    for (int xPos = 0; xPos < width; xPos++) {
+        delete[] map[xPos];
+    }
+    delete[] map;
+}
 
 void Map::setUnit(Unit* unit, Point* pos) {
     Tile* tile = this->map[pos->x][pos->y];
@@ -34,21 +39,22 @@ bool Map::isBlank(Point* pos) {
 
 bool Map::moveTowards(Unit* unit, int cooldown) {
     if (!unit->canMove()) return true;
-    Point* nextPos = findBetterPositionOutOf(unit->getPosition(), unit->getTarget());
-    if (nextPos != nullptr) {
+    Point nextPos = findBetterPositionOutOf(unit->getPosition(), unit->getTarget());
+    if (isBound(&nextPos)) {
         setUnit(nullptr, unit->getPosition());
-        setUnit(unit, nextPos);
+        setUnit(unit, &nextPos);
         unit->setMoveCooldown(cooldown);
         return true;
     }
     return false;
 }
 
-Point* Map::findBetterPositionOutOf(Point* p0, Point* p2) {
+Point Map::findBetterPositionOutOf(Point* p0, Point* p2) {
+    Point point(-1, -1);
     int bestDistance = p0->getDistanceTo(*p2);
-    if (bestDistance == 0) return nullptr;
-    if (bestDistance == 1 && !isReachable(p2)) return nullptr;
-    Point* best;
+    if (bestDistance == 0) return point;
+    if (bestDistance == 1 && !isReachable(p2)) return point;
+    Point* best = nullptr;
     bool found = false;
     std::unordered_set<Point*> searched;
     std::unordered_map<Point*, Point*> parentPoints;
@@ -63,9 +69,15 @@ Point* Map::findBetterPositionOutOf(Point* p0, Point* p2) {
                 for (int offsetY = -1; offsetY <= 1; offsetY++) {
                     if (offsetY == 0 && offsetX == 0) continue;
                     Point* p = new Point(p1, offsetX, offsetY);
-                    if (visited.contains(p->x * width + p->y)) continue;
+                    if (visited.contains(p->x * width + p->y)) {
+                        delete p;
+                        continue;
+                    }
                     visited.insert(p->x * width + p->y);
-                    if (!isReachable(p)) continue;
+                    if (!isReachable(p)) {
+                        delete p;
+                        continue;
+                    }
                     int distance = p1->getDistanceTo(Point(p2, -offsetX, -offsetY));
                     newPoints.insert(p);
                     parentPoints.insert(std::pair<Point*, Point*>(p, p1));
@@ -80,9 +92,13 @@ Point* Map::findBetterPositionOutOf(Point* p0, Point* p2) {
     }
     if (found) {
         while (parentPoints.at(best) != p0) best = parentPoints.at(best);
-        return best;
     }
-    return nullptr;
+    if (best != nullptr) {
+        point.x = best->x;
+        point.y = best->y;
+    }
+    for (auto kv : parentPoints) delete kv.first;
+    return point;
 }
 
 Unit* Map::findUnitInRangeByOwnerId(Point* pos, int ownerId, int range) {
@@ -108,16 +124,16 @@ std::unordered_set<Unit*> Map::findUnitsInRangeByOwnerId(Positioned* entity, int
 }
 
 void Map::rangeIterator(Point* p, int range, std::function<bool(Unit*)> callback) {
-    Point* pos = new Point(p->x, p->y);
+    Point pos(p->x, p->y);
     int xDir = 1;
     int yDir = 0;
     float toChange = 0.5;
     for (int i = 0; i <= range * 4; i++) {
         for (float j = 0; j < toChange; j++) {
-            pos->x += xDir;
-            pos->y += yDir;
-            if (!isBound(pos)) continue;
-            Unit* unit = getUnit(pos);
+            pos.x += xDir;
+            pos.y += yDir;
+            if (!isBound(&pos)) continue;
+            Unit* unit = getUnit(&pos);
             if (unit == nullptr) continue;
             if (!callback(unit)) return;
         }

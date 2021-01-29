@@ -14,7 +14,7 @@ class PlayerSpawner {
         virtual ~PlayerSpawner();
 
         void spawnPlayer(Player* player);
-        void spawnUnit(Player* player, Point* pos);
+        void spawnUnit(Player* player, Point pos);
     private:
         Map* map;
         UnitFactory* factory;

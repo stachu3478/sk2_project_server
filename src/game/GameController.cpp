@@ -1,32 +1,31 @@
 #include "GameController.h"
 
 GameController::GameController() {
-    server = new Server();
-    server->setClientCallback([this](Client* c){
+    server.setClientCallback([this](Client* c){
         this->addPlayer(new Player(c));
     });
-    logger->log("Starting server...");
+    logger.log("Starting server...");
 }
 
 GameController::~GameController() {
-    delete logger;
-    delete server;
+    for (Player* player : players) {
+        delete player;
+    }
     for (Game* g : games) {
         delete g;
     }
 }
 
 void GameController::stop(std::function<void()> callback) {
-    logger->log("Closing server...");
-    logger->finalize();
-    server->shutdown(callback);
+    logger.log("Closing server...");
+    logger.finalize();
+    server.shutdown(callback);
 }
 
 void GameController::start() {
-    server->listenAt(config.port);
-    server->setEpollController(new EpollController());
-    while (server->isAlive()) {
-        server->listenFor(config.tickTime); // TODO: reduce lag by counting delayed time
+    server.listenAt(config.port);
+    while (server.isAlive()) {
+        server.listenFor(config.tickTime); // TODO: reduce lag by counting delayed time
         tick();
     }
 }
@@ -53,11 +52,11 @@ void GameController::addPlayer(Player* player) {
         this->assignPlayer(player, m);
     });
     messageIdentifier->onInvalidMessage([this, player]() {
-        logger->log(std::string(player->getNickname()) + " sent invalid message");
+        logger.log(std::string(player->getNickname()) + " sent invalid message");
         player->kick("Invalid message");
         removePlayer(player);
     });
-    messageIdentifier->setMessageFilter(new NewPlayerMessageFilter());
+    messageIdentifier->setMessageFilter(newPlayerMessageFilter);
     Client* client = player->getClient();
     client->setMessageIdentifier(messageIdentifier);
 }
@@ -65,7 +64,7 @@ void GameController::addPlayer(Player* player) {
 void GameController::assignPlayer(Player* p, PlayMessage* m) {
     std::string nick = m->getNickname();
     p->setNickname(nick);
-    logger->log(nick + " joined the game");
+    logger.log(nick + " joined the game");
     assignPlayer(p);
 }
 
@@ -76,7 +75,7 @@ void GameController::assignPlayer(Player* p) {
             return;
         }
     }
-    lastGame = new Game(config, logger);
+    Game* lastGame = new Game(config, &logger);
     games.insert(lastGame);
     lastGame->addPlayer(p);
     lastGame->onChangeGame([this](Player* player) {
@@ -93,5 +92,5 @@ void GameController::removePlayer(Player* p) {
         g->removePlayer(p);
     }
     players.erase(p);
-    logger->log(std::string(p->getNickname()) + " left the game");
+    logger.log(std::string(p->getNickname()) + " left the game");
 }

@@ -8,8 +8,7 @@
 #include "PlayerSpawner.h"
 #include "GameConfig.h"
 #include "GameMessageIdentifier.h"
-#include "IngameMessageFilter.h"
-#include "NewPlayerMessageFilter.h"
+#include "MessageFilter.h"
 #include "Logger.h"
 #include "./message/SimpleMessage.h"
 #include "./message/SimpleMessageOut.h"
@@ -31,7 +30,7 @@ class Game {
 
         void tick();
         bool isFinished();
-        void finish() { for (auto kv : players) removePlayerStuff(kv.second); players.clear(); };
+        void finish() { if (players.size() > 0)  { for (auto kv : players) removePlayerStuff(kv.second); players.clear(); }; };
         bool isFull() { return players.size() >= config.maxPlayersCountPerGame; };
         bool canJoin(Player* p) { return !bannedPlayers.contains(p) && (!started || !hasWinner()) && !isFull(); };
         void addPlayer(Player* p);
