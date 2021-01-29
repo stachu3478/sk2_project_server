@@ -17,7 +17,9 @@ void MoveUnitsMessage::readBuffer(Buffer* buffer) {
         targetX = readInteger(buffer);
         targetY = readInteger(buffer);
         unitCount = unitCountToRead = readInteger(buffer);
-        if (unitCountToRead > maxBatchSize) { // No way guy TODO: make better error callback
+        if (unitCountToRead > maxBatchSize || unitCountToRead < 1) { // No way guy TODO: make better error callback
+            unitCount = 0;
+            unitIds = new int[0];
             complete = true;
             return;
         }

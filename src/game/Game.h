@@ -47,6 +47,8 @@ class Game {
         void kick(Player* player);
         void broadcast(MessageOut* m);
         void removeUnit(Unit* unit);
+        void removeAllUnits(Player* p);
+        void removeUnitStuff(Unit* unit);
         std::unordered_map<int, Player*> players;
         std::unordered_set<Player*> bannedPlayers;
         bool started = false;

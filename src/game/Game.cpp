@@ -139,9 +139,7 @@ void Game::removePlayer(Player* p) {
 }
 
 void Game::removePlayerStuff(Player* p) {
-    for (auto kv : p->getUnits()) {
-        removeUnit(kv.second);
-    }
+    removeAllUnits(p);
     bannedPlayers.insert(p);
     if (!p->isOffline()) {
         ((GameMessageIdentifier*)p->getClient()->getMessageIdentifier())->setMessageFilter(new NewPlayerMessageFilter());
@@ -226,9 +224,20 @@ void Game::broadcast(MessageOut* m) {
 }
 
 void Game::removeUnit(Unit* unit) {
+    removeUnitStuff(unit);
+    players.at(unit->getOwnerId())->removeUnit(unit);
+}
+
+void Game::removeAllUnits(Player* p) {
+    for (auto kv : p->getUnits()) {
+        removeUnitStuff(kv.second);
+    }
+    p->clearUnits();
+}
+
+void Game::removeUnitStuff(Unit* unit) {
     factory->removeUnit(unit);
     map->unsetUnit(unit);
     deactivatedUnits.insert(unit);
-    players.at(unit->getOwnerId())->removeUnit(unit);
     broadcast(new UnitDestroyedMessage(unit));
 }
