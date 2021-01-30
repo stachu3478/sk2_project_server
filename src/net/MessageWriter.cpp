@@ -17,7 +17,6 @@ void MessageWriter::writeMessages() {
         currentWritten = write(fd, buffer.data(), buffer.in_avail());
         if (currentWritten == -1) {
             perror("write");
-            currentWritten = 0;
         } else if (currentWritten > 0) {
             // printf("%d bytes written\n", currentWritten);
             buffer.sgetn(currentWritten);
