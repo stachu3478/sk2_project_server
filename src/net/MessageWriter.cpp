@@ -8,41 +8,19 @@ MessageWriter::~MessageWriter() {}
 
 void MessageWriter::emit(MessageOut* m) {
     char* messageString = m->serialize();
-    if (bufferAllocated) { // need to rewrite buffers
-        writePos -= readPos;
-        char* newBuffer = new char[writePos + m->length()];
-        for (int i = 0; i < writePos; i++) {
-            newBuffer[i] = buffer[readPos++];
-        }
-        readPos = 0;
-        for (int i = 0; i < m->length(); i++) {
-            newBuffer[writePos++] = messageString[i];
-        }
-        delete[] messageString;
-        delete[] buffer;
-        buffer = newBuffer;
-    } else {
-        buffer = messageString;
-        writePos = m->length();
-        readPos = 0;
-    }
-    bufferAllocated = true;
+    buffer.sputn(messageString, m->length());
 }
 
 void MessageWriter::writeMessages() {
     int currentWritten;
     do {
-        currentWritten = write(fd, buffer + readPos, writePos - readPos);
+        currentWritten = write(fd, buffer.data(), buffer.in_avail());
         if (currentWritten == -1) {
             perror("write");
             currentWritten = 0;
         } else if (currentWritten > 0) {
             // printf("%d bytes written\n", currentWritten);
-            readPos += currentWritten;
+            buffer.sgetn(currentWritten);
         }
-    } while (writePos - readPos > 0 && currentWritten > 0);
-    if (writePos == readPos) {
-        delete[] buffer;
-        bufferAllocated = false;
-    }
+    } while (buffer.in_avail() > 0 && currentWritten > 0);
 }

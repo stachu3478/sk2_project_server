@@ -11,6 +11,7 @@ class Buffer {
         int in_avail();
         char sbumpc();
         char* sgetn(int count);
+        char* data() { return current; };
         void sputn(char* b, int count);
     private:
         char* current = new char[1];

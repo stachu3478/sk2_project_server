@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <sstream>
+#include "Buffer.h"
 #include "MessageOut.h"
 
 class MessageWriter {
@@ -11,8 +12,5 @@ class MessageWriter {
         void writeMessages();
     private:
         int fd;
-        char* buffer;
-        bool bufferAllocated = false;
-        int writePos = 0;
-        int readPos = 0;
+        Buffer buffer;
 };
