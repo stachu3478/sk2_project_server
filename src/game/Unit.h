@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include <memory>
 #include "Point.h"
 #include "Positioned.h"
 
@@ -12,9 +13,9 @@ class Unit : public Positioned {
 
         void setPos(Point* p, int cooldown) { setPosition(p); this->moveCooldown = cooldown; this->moved = true; };
         void setMoveCooldown(int c) { this->moveCooldown = c; this->moved = true; };
-        Point* getTarget() { return target; };
-        void setTarget(Point* target) { this->target->x = target->x; this->target->y = target->y; moving = true; };
-        void setTargetUnit(Unit* unit) { this->targetUnitId = unit->getId(); targetOwnerId = unit->getOwnerId(); setTarget(unit->getPosition()); attacking = true; };
+        Point* getTarget() { return &target; };
+        void setTarget(Point* target) { this->target.x = target->x; this->target.y = target->y; moving = true; };
+        void setTargetUnit(std::shared_ptr<Unit> unit) { this->targetUnitId = unit->getId(); targetOwnerId = unit->getOwnerId(); setTarget(unit->getPosition()); attacking = true; };
         int getTargetUnitId() { return targetUnitId; };
         int getTargetUnitOwnerId() { return targetOwnerId; };
         int getId() { return id; };
@@ -25,18 +26,19 @@ class Unit : public Positioned {
         bool hasMoved() { bool m = moved; moved = false; return m; };
         bool isMoving() { return moving; };
         bool isAttacking() { return attacking; };
+        void die() { hitpoints = 0; };
         bool isDead() { return hitpoints <= 0; };
         bool isIdle() { return isDead() || (!isMoving() && !isAttacking()); };
         void stopMoving() { this->moving = false; };
         void stopAttacking() { this->attacking = false; };
-        bool attack(Unit* unit, int cooldown);
+        bool attack(std::shared_ptr<Unit> unit, int cooldown);
     private:
         int id;
         int ownerId;
         int maxHitpoints;
         int hitpoints;
         int attackDamage;
-        Point* target = new Point(-1, -1);
+        Point target{-1, -1};
         int targetUnitId;
         int targetOwnerId;
         int moveCooldown = 0;
@@ -45,3 +47,5 @@ class Unit : public Positioned {
         bool moving = false;
         bool attacking = false;
 };
+
+typedef std::shared_ptr<Unit> UnitPtr;

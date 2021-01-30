@@ -2,15 +2,13 @@
 
 GameController::GameController() {
     server.setClientCallback([this](Client* c){
-        this->addPlayer(new Player(c));
+        PlayerPtr p{new Player(c)};
+        this->addPlayer(p);
     });
     logger.log("Starting server...");
 }
 
 GameController::~GameController() {
-    for (Player* player : players) {
-        delete player;
-    }
     for (Game* g : games) {
         delete g;
     }
@@ -35,7 +33,6 @@ void GameController::tick() {
     for (Game* g : games) {
         g->tick();
         if (g->isFinished()) {
-            g->finish();
             finishedGames.insert(g);
         }
     }
@@ -45,9 +42,9 @@ void GameController::tick() {
     }
 }
 
-void GameController::addPlayer(Player* player) {
+void GameController::addPlayer(PlayerPtr player) {
     players.insert(player);
-    GameMessageIdentifier* messageIdentifier = new GameMessageIdentifier();
+    GameMessageIdentifier* messageIdentifier = player->getMessageIdentifier();
     messageIdentifier->onPlay([this, player](PlayMessage* m){
         this->assignPlayer(player, m);
     });
@@ -61,14 +58,14 @@ void GameController::addPlayer(Player* player) {
     client->setMessageIdentifier(messageIdentifier);
 }
 
-void GameController::assignPlayer(Player* p, PlayMessage* m) {
+void GameController::assignPlayer(PlayerPtr p, PlayMessage* m) {
     std::string nick = m->getNickname();
     p->setNickname(nick);
     logger.log(nick + " joined the game");
     assignPlayer(p);
 }
 
-void GameController::assignPlayer(Player* p) {
+void GameController::assignPlayer(PlayerPtr p) {
     for (Game* game : games) {
         if (game->canJoin(p)) {
             game->addPlayer(p);
@@ -78,19 +75,20 @@ void GameController::assignPlayer(Player* p) {
     Game* lastGame = new Game(config, &logger);
     games.insert(lastGame);
     lastGame->addPlayer(p);
-    lastGame->onChangeGame([this](Player* player) {
+    lastGame->onChangeGame([this](PlayerPtr player) {
         assignPlayer(player);
     });
-    lastGame->onPlayerRemoved([this](Player* player) {
+    lastGame->onPlayerRemoved([this](PlayerPtr player) {
         if (player->getClient() != nullptr) return;
         removePlayer(player);
     });
 }
 
-void GameController::removePlayer(Player* p) {
+void GameController::removePlayer(PlayerPtr p) {
     for (Game* g : games) {
         g->removePlayer(p);
     }
     players.erase(p);
     logger.log(std::string(p->getNickname()) + " left the game");
+    // delete p; // FIXME: seg fault
 }

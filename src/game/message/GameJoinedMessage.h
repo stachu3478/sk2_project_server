@@ -8,11 +8,11 @@
 
 class GameJoinedMessage : public MessageOut {
     public:
-        GameJoinedMessage(std::unordered_map<int, Unit*> units) { this->units = units; };
+        GameJoinedMessage(std::unordered_map<int, UnitPtr> units) { this->units = units; };
         virtual ~GameJoinedMessage();
 
         char* serialize();
         int length() { return 5 + units.size() * 14; };
     private:
-        std::unordered_map<int, Unit*> units;
+        std::unordered_map<int, UnitPtr> units;
 };

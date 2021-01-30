@@ -7,7 +7,7 @@
 
 class UnitAttackedMessage : public MessageOut {
     public:
-        UnitAttackedMessage(Unit* attacker, Unit* attacked) { this->attackerId = attacker->getId(); this->attackedId = attacked->getId(); this->attackedHitpoints = attacked->getHitpointsPercent(); };
+        UnitAttackedMessage(UnitPtr attacker, UnitPtr attacked) { this->attackerId = attacker->getId(); this->attackedId = attacked->getId(); this->attackedHitpoints = attacked->getHitpointsPercent(); };
         virtual ~UnitAttackedMessage();
 
         char* serialize();

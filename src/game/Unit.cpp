@@ -1,6 +1,6 @@
 #include "Unit.h"
 
-bool Unit::attack(Unit* unit, int cooldown) {
+bool Unit::attack(UnitPtr unit, int cooldown) {
     if (attackCooldown-- <= 0) {
         unit->hitpoints -= attackDamage;
         this->attackCooldown = cooldown;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Point.h"
+#include <memory>
 
 class Positioned {
     public:
@@ -11,7 +12,9 @@ class Positioned {
         void setPosition(Point* p) { position.x = p->x; position.y = p->y; };
 
         double getDistance(Point* p) { return p->getDistanceTo(position); };
-        double getDistance(Positioned* p) { return getDistance(p->getPosition()); };
+        double getDistance(std::shared_ptr<Positioned> p) { return getDistance(p->getPosition()); };
     protected:
         Point position;
 };
+
+typedef std::shared_ptr<Positioned> PositionedPtr;

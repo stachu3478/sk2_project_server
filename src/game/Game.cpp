@@ -1,16 +1,15 @@
 #include "Game.h"
 
-Game::Game(GameConfig config, Logger* logger) {
+Game::Game(GameConfig config, Logger* logger) :
+map{config.mapWidth, config.mapHeight},
+spawner{&map, &factory, &config} {
     this->config = config;
     this->countdownTicks = config.countdownTicks();
     this->logger = logger;
     logger->log("Creating new game...");
 }
 
-Game::~Game() {
-    delete factory;
-    delete spawner;
-}
+Game::~Game() {}
 
 bool Game::isFinished() {
     if (!started) return false;
@@ -31,7 +30,7 @@ bool Game::hasWinner() {
     return livingPlayer;
 }
 
-void Game::addPlayer(Player* p) {
+void Game::addPlayer(PlayerPtr p) {
     p->setOwnerId(ownerCounter++);
     p->setScore(0);
 
@@ -40,24 +39,23 @@ void Game::addPlayer(Player* p) {
 
     PlayerJoinedMessage pJoinedMessage(p->getNickname(), p->getOwnerId());
     for (auto kv : players) {
-        Player* player = kv.second;
+        PlayerPtr player = kv.second;
         player->emit(&pJoinedMessage); // inform all players about joining p
         PlayerJoinedMessage playerJoinedMessage(player->getNickname(), player->getOwnerId());
         p->emit(&playerJoinedMessage); // inform p about joining all players
     }
     players.insert(std::pair(p->getOwnerId(), p));
-    ((GameMessageIdentifier*)p->getClient()->getMessageIdentifier())->setMessageFilter(ingameMessageFilter);
+    GameMessageIdentifier* gameMessageIdentifier = p->getMessageIdentifier();
+    gameMessageIdentifier->setMessageFilter(ingameMessageFilter);
     if (started) {
         addToGame(p);
         for (auto kv : p->getUnits()) {
             UnitSpawnedMessage m(kv.second);
             broadcast(&m);
         }
-        GameJoinedMessage m(factory->getUnits());
+        GameJoinedMessage m(factory.getUnits());
         p->emit(&m);
     }
-    Client* client = p->getClient();
-    GameMessageIdentifier* gameMessageIdentifier = (GameMessageIdentifier*)client->getMessageIdentifier();
     gameMessageIdentifier->onLeaveGame([this, p](SimpleMessage* _){
         _->ignore();
         removePlayer(p);
@@ -74,24 +72,21 @@ void Game::start() {
         countdownTicks--;
         return;
     }
-    map = new Map(config.mapWidth, config.mapHeight);
-    this->factory = new UnitFactory();
-    this->spawner = new PlayerSpawner(map, factory, &config);
     for (auto kv : players) {
         addToGame(kv.second);
     }
     started = true;
-    GameJoinedMessage m(factory->getUnits());
+    GameJoinedMessage m(factory.getUnits());
     for (auto kv : players) {
         kv.second->emit(&m);
     }
 }
 
-void Game::addToGame(Player* player) {
-    spawner->spawnPlayer(player);
+void Game::addToGame(PlayerPtr player) {
+    spawner.spawnPlayer(player);
     Client* client = player->getClient();
     if (client == nullptr) return; // network disconnected player counts to the game
-    GameMessageIdentifier* gameMessageIdentifier = (GameMessageIdentifier*)client->getMessageIdentifier();
+    GameMessageIdentifier* gameMessageIdentifier = player->getMessageIdentifier();
     for (auto v: players)
     {
         PlayersScoreChangedMessage m(v.second);
@@ -100,27 +95,28 @@ void Game::addToGame(Player* player) {
     gameMessageIdentifier->onMoveUnits([this, player](MoveUnitsMessage* m){
         int* unitIds = m->getUnitIds();
         for (int i = 0; i < m->getUnitCount(); i++) {
-            Unit* unit = factory->getUnit(unitIds[i]);
+            UnitPtr unit = factory.getUnit(unitIds[i]);
             if (unit == nullptr) continue;
             if (unit->getOwnerId() != player->getOwnerId()) {
                 kick(player); // Wants to use not his units
                 return;
             }
             unit->stopAttacking();
-            unit->setTarget(new Point(m->getTargetX(), m->getTargetY()));
+            Point target(m->getTargetX(), m->getTargetY());
+            unit->setTarget(&target);
             activeUnits.insert(unit);
         }
     });
     gameMessageIdentifier->onAttackUnits([this, player](AttackUnitsMessage* m){
         int* unitIds = m->getUnitIds();
-        Unit* targetUnit = factory->getUnit(m->getTargetUnitId());
+        UnitPtr targetUnit = factory.getUnit(m->getTargetUnitId());
         if (targetUnit == nullptr) return;
         if (targetUnit->getOwnerId() == player->getOwnerId()) {
             kick(player); // Wants to attack himself
             return;
         }
         for (int i = 0; i < m->getUnitCount(); i++) {
-            Unit* unit = factory->getUnit(unitIds[i]);
+            UnitPtr unit = factory.getUnit(unitIds[i]);
             if (unit == nullptr) continue;
             if (unit->getOwnerId() != player->getOwnerId()) {
                 kick(player); // Wants to use not his units
@@ -132,25 +128,25 @@ void Game::addToGame(Player* player) {
     });
 }
 
-void Game::kick(Player* player) {
+void Game::kick(PlayerPtr player) {
     removePlayer(player);
     player->kick("Oszust!");
     //metoda do skreślenia gracza
 }
 
-void Game::removePlayer(Player* p) {
+void Game::removePlayer(PlayerPtr p) {
     if (!players.contains(p->getOwnerId())) return;
     if (players.size() > 0) players.erase(p->getOwnerId());
     removePlayerStuff(p);
 }
 
-void Game::removePlayerStuff(Player* p) {
+void Game::removePlayerStuff(PlayerPtr p) {
     GameLeftMessage gameLeftMessage;
     PlayerLeftMessage playerLeftMessage(p->getOwnerId());
     removeAllUnits(p);
     bannedPlayers.insert(p);
     if (!p->isOffline()) {
-        ((GameMessageIdentifier*)p->getClient()->getMessageIdentifier())->setMessageFilter(newPlayerMessageFilter);
+        p->getMessageIdentifier()->setMessageFilter(newPlayerMessageFilter);
         p->emit(&gameLeftMessage);
     }
     broadcast(&playerLeftMessage);
@@ -164,26 +160,26 @@ void Game::tick() {
         else countdownTicks = config.countdownTicks();
         return;
     }
-    std::unordered_set<Unit*> toBeActivated;
-    for (Unit* unit : activeUnits) {
+    std::unordered_set<UnitPtr> toBeActivated;
+    for (UnitPtr unit : activeUnits) {
         if (unit->isIdle()) {
             deactivatedUnits.insert(unit);
             continue;
         }
         if (unit->isAttacking()) {
-            Unit* targetUnit = factory->getUnit(unit->getTargetUnitId());
+            UnitPtr targetUnit = factory.getUnit(unit->getTargetUnitId());
             if (targetUnit == nullptr) {
-                Unit* anotherTarget = map->findUnitInRangeByOwnerId(unit->getPosition(), unit->getTargetUnitOwnerId(), config.units.maxAttackDistance);
+                UnitPtr anotherTarget = map.findUnitInRangeByOwnerId(unit->getPosition(), unit->getTargetUnitOwnerId(), config.units.maxAttackDistance);
                 if (anotherTarget != nullptr) {
                     unit->setTargetUnit(anotherTarget); // choose another target near him
                     continue;
                 }
-                anotherTarget = map->findUnitInRangeByOwnerId(unit->getTarget(), unit->getTargetUnitOwnerId(), config.units.maxAttackDistance);
+                anotherTarget = map.findUnitInRangeByOwnerId(unit->getTarget(), unit->getTargetUnitOwnerId(), config.units.maxAttackDistance);
                 if (anotherTarget != nullptr) unit->setTargetUnit(anotherTarget); // choose another target near last target
                 else unit->stopAttacking(); 
                 continue;
             }
-            if (unit->getDistance(targetUnit) < config.units.maxAttackDistance) {
+            if (unit->getDistance(std::dynamic_pointer_cast<Positioned>(targetUnit)) < config.units.maxAttackDistance) {
                 unit->stopMoving();
                 if (unit->attack(targetUnit, config.units.attackTickColldown)) {
                     UnitAttackedMessage m(unit, targetUnit);
@@ -191,13 +187,13 @@ void Game::tick() {
                     if (targetUnit->isDead()) {
                         removeUnit(targetUnit); // death act
                         int ownerid = unit->getOwnerId();
-                        Player* scorer = players.at(ownerid);
+                        PlayerPtr scorer = players.at(ownerid);
                         scorer->addScore(10);
                         PlayersScoreChangedMessage mScore(scorer);
                         broadcast(&mScore);
                         //metoda dodaje punkty getOwnerId(unit)
                     } else if (targetUnit->isIdle()) {
-                        for (Unit* avenger : map->findUnitsInRangeByOwnerId(targetUnit, targetUnit->getOwnerId(), config.units.maxAttackDistance)) {
+                        for (UnitPtr avenger : map.findUnitsInRangeByOwnerId(std::dynamic_pointer_cast<Positioned>(targetUnit), targetUnit->getOwnerId(), config.units.maxAttackDistance)) {
                             if (avenger->isIdle()) {
                                 avenger->setTargetUnit(unit); // revenge
                                 toBeActivated.insert(avenger);
@@ -208,7 +204,7 @@ void Game::tick() {
             } else unit->setTarget(targetUnit->getPosition());
         }
         if (unit->isMoving()) {
-            if (map->moveTowards(unit, config.units.moveTickCooldown)) {
+            if (map.moveTowards(unit, config.units.moveTickCooldown)) {
                 UnitMovedMessage m(unit);
                 if (unit->hasMoved()) broadcast(&m);
             } else {
@@ -217,38 +213,39 @@ void Game::tick() {
             }
         }
     }
-    for (Unit* unit : toBeActivated) {
+    for (UnitPtr unit : toBeActivated) {
         activeUnits.insert(unit);
     }
-    for (Unit* unit : deactivatedUnits) {
+    for (UnitPtr unit : deactivatedUnits) {
         activeUnits.erase(unit);
-        if (unit->isDead()) delete unit;
     }
     deactivatedUnits.clear();
 }
 
 void Game::broadcast(MessageOut* m) {
     for (auto kv : players) {
-        Player* p = kv.second;
+        PlayerPtr p = kv.second;
         p->emit(m);
     }
 }
 
-void Game::removeUnit(Unit* unit) {
+void Game::removeUnit(UnitPtr unit) {
     removeUnitStuff(unit);
     players.at(unit->getOwnerId())->removeUnit(unit);
 }
 
-void Game::removeAllUnits(Player* p) {
+void Game::removeAllUnits(PlayerPtr p) {
     for (auto kv : p->getUnits()) {
         removeUnitStuff(kv.second);
     }
     p->clearUnits();
 }
 
-void Game::removeUnitStuff(Unit* unit) {
-    factory->removeUnit(unit);
-    map->unsetUnit(unit);
+void Game::removeUnitStuff(UnitPtr unit) {
+    UnitDestroyedMessage m(unit);
+    unit->die();
+    factory.removeUnit(unit);
+    map.unsetUnit(unit);
     deactivatedUnits.insert(unit);
-    broadcast(new UnitDestroyedMessage(unit));
+    broadcast(&m);
 }

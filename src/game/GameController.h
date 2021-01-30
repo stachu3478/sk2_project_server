@@ -24,12 +24,12 @@ class GameController {
         void setServerPort(int port) { if (port != 0) config.port = port; else logger.log(std::string("Invalid port specified (the port will remain the same): ") + std::to_string(port)); };
     private:
         void tick();
-        void addPlayer(Player* p);
-        void assignPlayer(Player* p, PlayMessage* m);
-        void assignPlayer(Player* p);
-        void removePlayer(Player* p);
+        void addPlayer(PlayerPtr p);
+        void assignPlayer(PlayerPtr p, PlayMessage* m);
+        void assignPlayer(PlayerPtr p);
+        void removePlayer(PlayerPtr p);
         std::unordered_set<Game*> games;
-        std::unordered_set<Player*> players;
+        std::unordered_set<PlayerPtr> players;
         GameConfig config;
         Server server;
         Logger logger{"log.txt"};

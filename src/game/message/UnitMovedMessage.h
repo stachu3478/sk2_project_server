@@ -8,7 +8,7 @@
 
 class UnitMovedMessage : public MessageOut {
     public:
-        UnitMovedMessage(Unit* unit) { this->toX = unit->getPosition()->x; this->toY = unit->getPosition()->y; this->unitId = unit->getId(); };
+        UnitMovedMessage(UnitPtr unit) { this->toX = unit->getPosition()->x; this->toY = unit->getPosition()->y; this->unitId = unit->getId(); };
         virtual ~UnitMovedMessage();
 
         char* serialize();

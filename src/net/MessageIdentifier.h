@@ -24,7 +24,7 @@ class MessageIdentifier {
         Message* lastMessage = nullptr;
         int fd;
         char buff[1024];
-        Buffer* buffer = new Buffer();
+        Buffer buffer;
         int bufferLength;
         bool bufferInitialized = false;
 };

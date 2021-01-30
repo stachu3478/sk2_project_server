@@ -1,34 +1,23 @@
 #include "Map.h"
 
-Map::Map(int width, int height) {
+Map::Map(unsigned int width, unsigned int height) {
     this->width = width;
     this->height = height;
-    this->map = new Tile**[width];
-    for (int xPos = 0; xPos < width; xPos++) {
-        this->map[xPos] = new Tile*[height];
-        for (int yPos = 0; yPos < height; yPos++) {
-            this->map[xPos][yPos] = nullptr;
-        }
-    }
+    this->map = new Tile[width * height];
 }
 
 Map::~Map() {
-    for (int xPos = 0; xPos < width; xPos++) {
-        delete[] map[xPos];
-    }
     delete[] map;
 }
 
-void Map::setUnit(Unit* unit, Point* pos) {
-    Tile* tile = this->map[pos->x][pos->y];
-    if (tile == nullptr) this->map[pos->x][pos->y] = new Tile(unit);
-    else tile->setUnit(unit);
+void Map::setUnit(UnitPtr unit, Point* pos) {
+    Tile* tile = this->map + pos->x + pos->y * width;
+    tile->setUnit(unit);
     if (unit != nullptr) unit->setPosition(pos);
 }
 
-Unit* Map::getUnit(Point* pos) {
-    Tile* tile = this->map[pos->x][pos->y];
-    if (tile == nullptr) return nullptr;
+UnitPtr Map::getUnit(Point* pos) {
+    Tile* tile = this->map + pos->x + pos->y * width;
     return tile->getUnit();
 }
 
@@ -37,7 +26,7 @@ bool Map::isBlank(Point* pos) {
     return false;
 }
 
-bool Map::moveTowards(Unit* unit, int cooldown) {
+bool Map::moveTowards(UnitPtr unit, int cooldown) {
     if (!unit->canMove()) return true;
     Point nextPos = findBetterPositionOutOf(unit->getPosition(), unit->getTarget());
     if (isBound(&nextPos)) {
@@ -101,9 +90,9 @@ Point Map::findBetterPositionOutOf(Point* p0, Point* p2) {
     return point;
 }
 
-Unit* Map::findUnitInRangeByOwnerId(Point* pos, int ownerId, int range) {
-    Unit* foundUnit = nullptr;
-    rangeIterator(pos, range, [this, ownerId, &foundUnit](Unit* unit) {
+UnitPtr Map::findUnitInRangeByOwnerId(Point* pos, int ownerId, int range) {
+    UnitPtr foundUnit = nullptr;
+    rangeIterator(pos, range, [this, ownerId, &foundUnit](UnitPtr unit) {
         if (unit->getOwnerId() == ownerId) {
             foundUnit = unit;
             return false;
@@ -113,17 +102,17 @@ Unit* Map::findUnitInRangeByOwnerId(Point* pos, int ownerId, int range) {
     return foundUnit;
 }
 
-std::unordered_set<Unit*> Map::findUnitsInRangeByOwnerId(Positioned* entity, int ownerId, int range) {
+std::unordered_set<UnitPtr> Map::findUnitsInRangeByOwnerId(PositionedPtr entity, int ownerId, int range) {
     Point* pos = entity->getPosition();
-    std::unordered_set<Unit*> foundUnits;
-    rangeIterator(pos, range, [this, ownerId, &foundUnits](Unit* unit) {
+    std::unordered_set<UnitPtr> foundUnits;
+    rangeIterator(pos, range, [this, ownerId, &foundUnits](UnitPtr unit) {
         if (unit->getOwnerId() == ownerId) foundUnits.insert(unit);
         return true;
     });
     return foundUnits;
 }
 
-void Map::rangeIterator(Point* p, int range, std::function<bool(Unit*)> callback) {
+void Map::rangeIterator(Point* p, int range, std::function<bool(UnitPtr)> callback) {
     Point pos(p->x, p->y);
     int xDir = 1;
     int yDir = 0;
@@ -133,7 +122,7 @@ void Map::rangeIterator(Point* p, int range, std::function<bool(Unit*)> callback
             pos.x += xDir;
             pos.y += yDir;
             if (!isBound(&pos)) continue;
-            Unit* unit = getUnit(&pos);
+            UnitPtr unit = getUnit(&pos);
             if (unit == nullptr) continue;
             if (!callback(unit)) return;
         }

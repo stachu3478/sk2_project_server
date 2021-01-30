@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <memory>
 #include "message/KickMessage.h"
 #include "../net/Client.h"
 #include "GameMessageIdentifier.h"
@@ -13,6 +14,7 @@ class Player {
         virtual ~Player();
 
         Client* getClient() { return client; };
+        GameMessageIdentifier* getMessageIdentifier() { return &messageIdentifier; };
         
         bool isOffline() { return client == nullptr; };
         void kick(const char* reason);
@@ -24,10 +26,10 @@ class Player {
         int getScore(){return score;};
         void addScore(int add){this->score += add;};
     
-        void addUnit(Unit* unit);
-        void removeUnit(Unit* unit) { removeUnit(unit->getId()); };
+        void addUnit(UnitPtr unit);
+        void removeUnit(UnitPtr unit) { removeUnit(unit->getId()); };
         void removeUnit(int id) { this->units.erase(id); };
-        std::unordered_map<int, Unit*> getUnits() { return units; };
+        std::unordered_map<int, UnitPtr> getUnits() { return units; };
         void clearUnits() { units.clear(); };
         int getUnitCount() { return units.size(); };
 
@@ -35,9 +37,12 @@ class Player {
         void setNickname(std::string nick) { nickname = nick; };
         std::string getNickname() { return nickname; };
     private:
+        GameMessageIdentifier messageIdentifier;
         std::string nickname;
         Client* client;
         int ownerId;
         int score;
-        std::unordered_map<int, Unit*> units;
+        std::unordered_map<int, UnitPtr> units;
 };
+
+typedef std::shared_ptr<Player> PlayerPtr;

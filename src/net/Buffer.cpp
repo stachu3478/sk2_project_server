@@ -29,6 +29,7 @@ void Buffer::sputn(char* b, int count) {
     for (int i = avail, j = 0; i < avail + count; i++, j++) {
         newBuff[i] = b[j];
     }
-    current = newBuff;
+    delete[] ptr;
+    ptr = current = newBuff;
     avail += count;
 }

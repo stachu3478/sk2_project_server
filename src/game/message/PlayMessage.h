@@ -15,7 +15,7 @@ class PlayMessage : public GameMessage {
 
         void readBuffer(Buffer* buffer);
         bool isComplete() { return complete; };
-        void receive() { if (!ignored) callback(this); };
+        void receive() { if (!ignored) callback(this); delete this; };
     private:
         std::function<void(PlayMessage*)> callback;
         std::string nickname;

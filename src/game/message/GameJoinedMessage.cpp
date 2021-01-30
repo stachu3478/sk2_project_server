@@ -7,8 +7,8 @@ char* GameJoinedMessage::serialize() {
     str[0] = 1;
     insertInteger(str + 1, units.size());
     int ptr = 5;
-    for (std::pair<int, Unit*> unitPair : units) { // 14 bytes per unit
-        Unit* unit = unitPair.second;
+    for (std::pair<int, UnitPtr> unitPair : units) { // 14 bytes per unit
+        UnitPtr unit = unitPair.second;
         insertInteger(str + ptr, unit->getId());
         ptr += 4;
         str[ptr++] = unit->getHitpointsPercent();

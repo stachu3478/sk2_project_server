@@ -4,9 +4,7 @@ Client::Client(int fd) : messageWriter{fd} {
     this->fd = fd;
 }
 
-Client::~Client() {
-    delete messageIdentifier;
-}
+Client::~Client() {}
 
 void Client::disconnect() {
     close(fd);

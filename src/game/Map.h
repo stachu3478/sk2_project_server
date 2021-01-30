@@ -10,24 +10,24 @@
 
 class Map {
     public:
-        Map(int width, int height);
+        Map(unsigned int width, unsigned int height);
         virtual ~Map();
 
-        Unit* getUnit(Point* pos);
-        void setUnit(Unit* unit, Point* pos);
-        void unsetUnit(Unit* unit) { setUnit(nullptr, unit->getPosition()); };
+        UnitPtr getUnit(Point* pos);
+        void setUnit(UnitPtr unit, Point* pos);
+        void unsetUnit(UnitPtr unit) { setUnit(nullptr, unit->getPosition()); };
         int getWidth() { return width; };
         int getHeight() { return height; };
         bool isBlank(Point* p);
-        bool isBound(Point* p) { return p->isPositive() && p->x < width && p->y < height; };
+        bool isBound(Point* p) { return p->isPositive() && (unsigned int)p->x < width && (unsigned int)p->y < height; };
         bool isReachable(Point* p) { return isBlank(p); };
-        bool moveTowards(Unit* unit, int cooldown);
-        Unit* findUnitInRangeByOwnerId(Point* pos, int ownerId, int range);
-        std::unordered_set<Unit*> findUnitsInRangeByOwnerId(Positioned* entity, int ownerId, int range);
+        bool moveTowards(UnitPtr unit, int cooldown);
+        UnitPtr findUnitInRangeByOwnerId(Point* pos, int ownerId, int range);
+        std::unordered_set<UnitPtr> findUnitsInRangeByOwnerId(PositionedPtr entity, int ownerId, int range);
     private:
         Point findBetterPositionOutOf(Point* p1, Point* p2);
-        void rangeIterator(Point* p, int range, std::function<bool(Unit*)> callback);
-        int width;
-        int height;
-        Tile*** map;
+        void rangeIterator(Point* p, int range, std::function<bool(UnitPtr)> callback);
+        unsigned int width;
+        unsigned int height;
+        Tile* map;
 };

@@ -7,7 +7,7 @@
 
 class UnitDestroyedMessage : public MessageOut {
     public:
-        UnitDestroyedMessage(Unit* dead) { this->deadUnitId = dead->getId(); };
+        UnitDestroyedMessage(UnitPtr dead) { this->deadUnitId = dead->getId(); };
         virtual ~UnitDestroyedMessage();
 
         char* serialize();

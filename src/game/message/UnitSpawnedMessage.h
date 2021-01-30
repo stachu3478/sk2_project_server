@@ -7,11 +7,11 @@
 
 class UnitSpawnedMessage: public MessageOut {
     public:
-        UnitSpawnedMessage(Unit* unit) { this->unit = unit; };
+        UnitSpawnedMessage(UnitPtr unit) { this->unit = unit; };
         virtual ~UnitSpawnedMessage();
 
         char* serialize();
         int length() { return 15; };
     private:
-        Unit* unit;
+        UnitPtr unit;
 };

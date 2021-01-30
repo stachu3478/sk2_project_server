@@ -18,7 +18,7 @@ class MoveUnitsMessage : public GameMessage {
 
         void readBuffer(Buffer* buffer);
         bool isComplete() { return complete; };
-        void receive() { if (!ignored) callback(this); };
+        void receive() { if (!ignored) callback(this); delete this; };
     private:
         std::function<void(MoveUnitsMessage*)> callback;
         int* unitIds;

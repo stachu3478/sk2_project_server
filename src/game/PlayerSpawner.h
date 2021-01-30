@@ -13,8 +13,8 @@ class PlayerSpawner {
         PlayerSpawner(Map* map, UnitFactory* factory, GameConfig* gameConfig);
         virtual ~PlayerSpawner();
 
-        void spawnPlayer(Player* player);
-        void spawnUnit(Player* player, Point pos);
+        void spawnPlayer(PlayerPtr player);
+        void spawnUnit(PlayerPtr player, Point pos);
     private:
         Map* map;
         UnitFactory* factory;

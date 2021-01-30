@@ -18,7 +18,7 @@ int MessageIdentifier::readMessages() {
             }
         } else if (charsRead > 0) {
             totalRead += charsRead;
-            buffer->sputn(buff, charsRead);
+            buffer.sputn(buff, charsRead);
             // printf("%d bytes read\n", charsRead);
         }
     } while (charsRead > 0);
@@ -28,13 +28,13 @@ int MessageIdentifier::readMessages() {
 
 void MessageIdentifier::createMessages() {
     if (lastMessage == nullptr) {
-        lastMessage = createMessage(buffer);
+        lastMessage = createMessage(&buffer);
     }
     while (lastMessage != nullptr) {
-        lastMessage->readBuffer(buffer); // FIXME: Sometimes segmentation fault
+        lastMessage->readBuffer(&buffer); // FIXME: Sometimes segmentation fault
         if (lastMessage->isComplete()) {
             lastMessage->receive();
-            lastMessage = createMessage(buffer);
+            lastMessage = createMessage(&buffer);
         } else break;
     };
 }

@@ -8,16 +8,12 @@ class UnitFactory {
         UnitFactory() {};
         virtual ~UnitFactory() {};
 
-        Unit* create(char ownerId, int hitpoints, int attackDamage) { // TODO: fix header code duplication
-    Unit* unit = new Unit(idCounter++, ownerId, hitpoints, attackDamage);
-    units.insert(std::pair<int, Unit*>(unit->getId(), unit));
-    return unit;
-};
-        std::unordered_map<int, Unit*> getUnits() { return units; };
-        Unit* getUnit(int id) { return units.contains(id) ? units.at(id) : nullptr; };
-        void removeUnit(Unit* unit) { units.erase(unit->getId()); };
+        UnitPtr create(char ownerId, int hitpoints, int attackDamage);
+        std::unordered_map<int, UnitPtr> getUnits() { return units; };
+        UnitPtr getUnit(int id) { return units.contains(id) ? units.at(id) : nullptr; };
+        void removeUnit(UnitPtr unit) { units.erase(unit->getId()); };
 
     private:
         int idCounter = 0;
-        std::unordered_map<int, Unit*> units;
+        std::unordered_map<int, UnitPtr> units;
 };

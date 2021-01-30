@@ -10,7 +10,7 @@ class SimpleMessage : public GameMessage {
 
         void readBuffer(Buffer* _) { _->in_avail(); };
         bool isComplete() { return true; };
-        void receive() { if (!ignored) callback(this); };
+        void receive() { if (!ignored) callback(this); delete this; };
     private:
         std::function<void(SimpleMessage*)> callback;
 };

@@ -9,7 +9,7 @@
 
 class PlayersScoreChangedMessage : public MessageOut {
     public:
-        PlayersScoreChangedMessage(Player* player) {ownerId = player->getOwnerId(); score = player->getScore();};
+        PlayersScoreChangedMessage(PlayerPtr player) {ownerId = player->getOwnerId(); score = player->getScore();};
         virtual ~PlayersScoreChangedMessage();
 
         char* serialize();

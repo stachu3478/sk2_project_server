@@ -4,12 +4,13 @@
 
 class Tile {
     public:
-        Tile(Unit* unit){ this->unit = unit; };
+        Tile() {};
+        Tile(UnitPtr unit){ this->unit = unit; };
         virtual ~Tile(){ };
 
-        Unit* getUnit(){ return unit; };
-        void setUnit(Unit* unit) { this->unit = unit; };
+        UnitPtr getUnit(){ return unit; };
+        void setUnit(UnitPtr unit) { this->unit = unit; };
 
     private:
-        Unit* unit = nullptr;
+        UnitPtr unit = nullptr;
 };

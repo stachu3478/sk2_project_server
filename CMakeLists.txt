@@ -28,8 +28,8 @@ src/game/message/UnitDestroyedMessage
 src/game/message/UnitSpawnedMessage
 src/game/message/PlayersScoreChangedMessage
 src/game/MessageFilter
-src/game/Map
 src/game/UnitFactory
+src/game/Map
 src/game/PlayerSpawner
 src/game/Player
 src/game/Game

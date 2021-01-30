@@ -21,5 +21,6 @@ void PlayMessage::readBuffer(Buffer* buffer) {
     safeNickname[nicknameLengthToRead] = '\0';
     for (int i = 0; i < nicknameLengthToRead; i++) safeNickname[i] = buff[i];
     nickname += safeNickname;
+    delete[] safeNickname;
     complete = true;
 }

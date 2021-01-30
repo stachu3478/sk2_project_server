@@ -11,7 +11,7 @@ PlayerSpawner::PlayerSpawner(Map* map, UnitFactory* factory, GameConfig* gameCon
 
 PlayerSpawner::~PlayerSpawner() {}
 
-void PlayerSpawner::spawnPlayer(Player* player) {
+void PlayerSpawner::spawnPlayer(PlayerPtr player) {
     //Spawn units
     double spawnDirection = 2 * M_PI * spawnDirectionClock++ / (double)maxClock;
     int spawnX = map->getWidth() / 2 + sin(spawnDirection) * (map->getWidth() / 2 - 1) - 1;
@@ -29,8 +29,8 @@ void PlayerSpawner::spawnPlayer(Player* player) {
     }
 }
 
-void PlayerSpawner::spawnUnit(Player* player, Point pos) {
-    Unit* unit = factory->create(player->getOwnerId(), unitHitpoints, unitAttackDamage);
+void PlayerSpawner::spawnUnit(PlayerPtr player, Point pos) {
+    UnitPtr unit = factory->create(player->getOwnerId(), unitHitpoints, unitAttackDamage);
     map->setUnit(unit, &pos);
     player->addUnit(unit);
 }
