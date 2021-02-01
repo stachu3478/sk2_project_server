@@ -19,6 +19,7 @@ class Player {
         bool isOffline() { return client == nullptr; };
         void kick(const char* reason);
         void emit(MessageOut* m);
+        void flush();
         void setOwnerId(int id) { this->ownerId = id; };
         int getOwnerId() { return this->ownerId; };
 

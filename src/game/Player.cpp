@@ -9,16 +9,22 @@ Player::~Player() {}
 
 void Player::emit(MessageOut* m) {
     if (client == nullptr) return;
+    client->emit(m);
+}
+
+void Player::flush() {
+    if (client == nullptr) return;
     if (client->getFd() == -1) {
         delete client;
         client = nullptr;
         return;
     }
-    client->emit(m);
+    client->flush();
 }
 
 void Player::kick(const char* reason) {
     client->emit(new KickMessage(reason));
+    client->flush();
     client->disconnect();
 }
 

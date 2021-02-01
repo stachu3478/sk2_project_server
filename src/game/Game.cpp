@@ -59,12 +59,17 @@ void Game::addPlayer(PlayerPtr p) {
     gameMessageIdentifier->onLeaveGame([this, p](SimpleMessage* _){
         _->ignore();
         removePlayer(p);
+        flush();
+        p->flush();
     });
     gameMessageIdentifier->onChangeGame([this, p](SimpleMessage* _){
         _->ignore();
         removePlayer(p);
         changeGameCallback(p);
+        flush();
+        p->flush();
     });
+    flush();
 }
 
 void Game::start() {
@@ -77,9 +82,7 @@ void Game::start() {
     }
     started = true;
     GameJoinedMessage m(factory.getUnits());
-    for (auto kv : players) {
-        kv.second->emit(&m);
-    }
+    broadcast(&m);
 }
 
 void Game::addToGame(PlayerPtr player) {
@@ -205,8 +208,10 @@ void Game::tick() {
         }
         if (unit->isMoving()) {
             if (map.moveTowards(unit, config.units.moveTickCooldown)) {
-                UnitMovedMessage m(unit);
-                if (unit->hasMoved()) broadcast(&m);
+                if (unit->hasMoved()) {
+                    UnitMovedMessage m(unit);
+                    broadcast(&m);
+                }
             } else {
                 unit->stopMoving();
                 unit->stopAttacking();
@@ -220,6 +225,7 @@ void Game::tick() {
         activeUnits.erase(unit);
     }
     deactivatedUnits.clear();
+    if (broadcasting) flush();
 }
 
 void Game::broadcast(MessageOut* m) {
@@ -227,6 +233,7 @@ void Game::broadcast(MessageOut* m) {
         PlayerPtr p = kv.second;
         p->emit(m);
     }
+    broadcasting = true;
 }
 
 void Game::removeUnit(UnitPtr unit) {
@@ -248,4 +255,11 @@ void Game::removeUnitStuff(UnitPtr unit) {
     map.unsetUnit(unit);
     deactivatedUnits.insert(unit);
     broadcast(&m);
+}
+
+void Game::flush() {
+    for (auto kv : players) {
+        kv.second->flush();
+    }
+    broadcasting = false;
 }

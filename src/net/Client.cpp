@@ -23,6 +23,9 @@ void Client::onDisconnection(std::function<void()> c) {
 
 void Client::emit(MessageOut* m) {
     messageWriter.emit(m);
+}
+
+void Client::flush() {
     messageWriter.writeMessages(); // TODO: handle unavailable writes
 }
 

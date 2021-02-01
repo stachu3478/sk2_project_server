@@ -47,12 +47,14 @@ class Game {
         void removeUnit(UnitPtr unit);
         void removeAllUnits(PlayerPtr p);
         void removeUnitStuff(UnitPtr unit);
+        void flush();
         std::unordered_map<int, PlayerPtr> players;
         std::unordered_set<PlayerPtr> bannedPlayers;
         bool started = false;
         GameConfig config;
         int ownerCounter = 0;
         int countdownTicks;
+        bool broadcasting = false;
         Map map;
         PlayerSpawner spawner;
         UnitFactory factory;

@@ -18,6 +18,7 @@ class Client : public EpollListener {
         MessageIdentifier* getMessageIdentifier() { return messageIdentifier; };
         void onDisconnection(std::function<void()> cb);
         void emit(MessageOut* m);
+        void flush();
 
         int getFd();
         void triggerIn();
