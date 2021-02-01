@@ -37,10 +37,10 @@ src/net/MessageIdentifier
 src/net/MessageWriter
 src/game/GameController
 src/game/GameMessageIdentifier
-
-
 )
 target_compile_options(main PRIVATE "--std=c++2a" "-W" "-Wall" "-Wextra" "-pedantic" "-Werror")
+
+add_subdirectory(src)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

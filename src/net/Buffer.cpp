@@ -12,9 +12,17 @@ char Buffer::sbumpc() {
     return c;
 }
 
-char* Buffer::sgetn(int count) {
+// Note: Need to handle output data memory while chosing terminated
+char* Buffer::sgetn(int count, bool terminated) {
     if (in_avail() < count) throw this;
-    char* c = current;
+    char* c;
+    if (terminated) {
+        c = new char[count + 1];
+        c[count] = '\0';
+        for (int i = 0; i < count; i++) {
+            c[i] = current[i];
+        }
+    } else c = current;
     current = current + count;
     avail -= count;
     return c;
