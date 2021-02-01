@@ -10,7 +10,7 @@ void PlayMessage::readBuffer(Buffer* buffer) {
     int bytesToRead = buffer->in_avail();
     if (bytesToRead == 0) return;
     if (!lengthRead) {
-        nicknameLengthToRead = buffer->sbumpc();
+        nicknameLengthToRead = (unsigned char)buffer->sbumpc();
         lengthRead = true;
     }
     if (buffer->in_avail() < nicknameLengthToRead) {

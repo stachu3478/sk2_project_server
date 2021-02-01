@@ -16,7 +16,7 @@ void MessageWriter::writeMessages() {
     do {
         currentWritten = write(fd, buffer.data(), buffer.in_avail());
         if (currentWritten == -1) {
-            perror("write");
+            perror("write"); // broken pipes are handled when trying to read
         } else if (currentWritten > 0) {
             // printf("%d bytes written\n", currentWritten);
             buffer.sgetn(currentWritten);
