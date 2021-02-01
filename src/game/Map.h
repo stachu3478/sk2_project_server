@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <unordered_set>
+#include <unordered_map>
 #include <functional>
 #include "Point.h"
 #include "Positioned.h"

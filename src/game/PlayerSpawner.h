@@ -3,9 +3,9 @@
 #include "cmath"
 #include "Point.h"
 #include "Unit.h"
+#include "Map.h"
 #include "UnitFactory.h"
 #include "Player.h"
-#include "Map.h"
 #include "GameConfig.h"
 
 class PlayerSpawner {

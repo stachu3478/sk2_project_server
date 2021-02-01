@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include "../../net/Buffer.h"
 #include <exception>
+#include "../../net/Buffer.h"
 
 class BufferDrownError : public std::exception {};
 void insertInteger(char* str, int v);

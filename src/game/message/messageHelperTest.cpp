@@ -1,3 +1,4 @@
+#include "../../net/Buffer.h"
 #include "messageHelper.h"
 #include "../../spec/spec.h"
 
