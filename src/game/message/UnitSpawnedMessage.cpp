@@ -3,8 +3,7 @@
 UnitSpawnedMessage::~UnitSpawnedMessage() {}
 
 char* UnitSpawnedMessage::serialize() {
-    char* str = new char[15];
-    str[0] = 6;
+    char* str = SimpleMessageOut::serialize();
     insertInteger(str + 1, unit->getId());
     str[5] = unit->getHitpointsPercent();
     str[6] = unit->getOwnerId();

@@ -16,7 +16,6 @@ add_executable(main
     src/game/Logger
     src/game/Unit
     $<TARGET_OBJECTS:messageHelper>
-    src/game/message/SimpleMessageOut
     src/game/message/GameMessage
     src/game/message/KickMessage
     src/game/message/PlayMessage

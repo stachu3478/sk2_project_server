@@ -1,5 +1,7 @@
 #include "GameController.h"
 
+using namespace std;
+
 GameController::GameController() {
     server.setClientCallback([this](Client* c){
         PlayerPtr p{new Player(c)};
@@ -14,7 +16,7 @@ GameController::~GameController() {
     }
 }
 
-void GameController::stop(std::function<void()> callback) {
+void GameController::stop(function<void()> callback) {
     logger.log("Closing server...");
     logger.finalize();
     server.shutdown(callback);
@@ -29,7 +31,7 @@ void GameController::start() {
 }
 
 void GameController::tick() {
-    std::unordered_set<Game*> finishedGames;
+    unordered_set<Game*> finishedGames;
     for (Game* g : games) {
         g->tick();
         if (g->isFinished()) {
@@ -49,7 +51,7 @@ void GameController::addPlayer(PlayerPtr player) {
         this->assignPlayer(player, m);
     });
     messageIdentifier->onInvalidMessage([this, player]() {
-        logger.log(std::string(player->getNickname()) + " sent invalid message");
+        logger.log(string(player->getNickname()) + " sent invalid message");
         player->kick("Invalid message");
         removePlayer(player);
     });
@@ -59,7 +61,7 @@ void GameController::addPlayer(PlayerPtr player) {
 }
 
 void GameController::assignPlayer(PlayerPtr p, PlayMessage* m) {
-    std::string nick = m->getNickname();
+    string nick = m->getNickname();
     p->setNickname(nick);
     logger.log(nick + " joined the game");
     assignPlayer(p);
@@ -72,7 +74,7 @@ void GameController::assignPlayer(PlayerPtr p) {
             return;
         }
     }
-    Game* lastGame = new Game(config, &logger);
+    Game* lastGame = new Game(&config, &logger);
     games.insert(lastGame);
     lastGame->addPlayer(p);
     lastGame->onChangeGame([this](PlayerPtr player) {
@@ -89,6 +91,6 @@ void GameController::removePlayer(PlayerPtr p) {
         g->removePlayer(p);
     }
     players.erase(p);
-    logger.log(std::string(p->getNickname()) + " left the game");
+    logger.log(string(p->getNickname()) + " left the game");
     // delete p; // FIXME: seg fault
 }

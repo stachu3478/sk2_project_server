@@ -1,11 +1,13 @@
 #include "Buffer.h"
 #include "../spec/spec.h"
 
+using namespace std;
+
 int main(int argc, char* argv[]) {
     it("properly_writes_and_reads_single_value", []{
         Buffer b;
         b.sputn("my value", 8);
-        assertEq(std::string(b.sgetn(b.in_avail(), true)), std::string("my value"));
+        assertEq(string(b.sgetn(b.in_avail(), true)), string("my value"));
     });
     it("properly_writes_and_reads_multiple_values", []{
         Buffer b;
@@ -15,17 +17,17 @@ int main(int argc, char* argv[]) {
         b.sputn("do", 2);
         b.sputn("you need?", 9);
         assertEq(b.in_avail(), 24);
-        assertEq(std::string(b.sgetn(b.in_avail(), true)), std::string("howmuchmemorydoyou need?"));
+        assertEq(string(b.sgetn(b.in_avail(), true)), string("howmuchmemorydoyou need?"));
     });
     it("properly_reads_multiple_values", []{
         Buffer b;
         b.sputn("bulk reads does not slow me", 27);
-        assertEq(std::string(b.sgetn(4, true)), std::string("bulk"));
-        assertEq(std::string(b.sgetn(6, true)), std::string(" reads"));
-        assertEq(std::string(b.sgetn(5, true)), std::string(" does"));
-        assertEq(std::string(b.sgetn(4, true)), std::string(" not"));
-        assertEq(std::string(b.sgetn(5, true)), std::string(" slow"));
-        assertEq(std::string(b.sgetn(3, true)), std::string(" me"));
+        assertEq(string(b.sgetn(4, true)), string("bulk"));
+        assertEq(string(b.sgetn(6, true)), string(" reads"));
+        assertEq(string(b.sgetn(5, true)), string(" does"));
+        assertEq(string(b.sgetn(4, true)), string(" not"));
+        assertEq(string(b.sgetn(5, true)), string(" slow"));
+        assertEq(string(b.sgetn(3, true)), string(" me"));
     });
     it("properly_reads_char_by_char", []{
         Buffer b;

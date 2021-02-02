@@ -1,5 +1,8 @@
 #include "EpollController.h"
 
+using namespace std;
+using namespace chrono;
+
 EpollController::EpollController() {
     fd = epoll_create1(0);
 }
@@ -16,10 +19,11 @@ void EpollController::removeListener(EpollListener* l) {
 }
 
 void EpollController::listen(int miliseconds) {
-    auto stopTime = std::chrono::system_clock::now() + std::chrono::milliseconds(miliseconds);
-    while(!shouldClose && stopTime > std::chrono::system_clock::now()) {
+    auto now = system_clock::now();
+    auto stopTime = now + milliseconds(miliseconds);
+    while(!shouldClose && stopTime > (now = system_clock::now())) {
         epoll_event* evts = events.data();
-        int nFds = epoll_wait(fd, evts, events.size(), std::chrono::duration_cast<std::chrono::milliseconds>(stopTime - std::chrono::system_clock::now()).count());
+        int nFds = epoll_wait(fd, evts, events.size(), duration_cast<milliseconds>(stopTime - now).count());
         if (nFds == -1) {
             if (errno == EINTR) printf("EINTR received, stopping\n");
             else {
@@ -46,7 +50,7 @@ void EpollController::listen(int miliseconds) {
     }
 }
 
-void EpollController::close(std::function<void(void)> callback) {
+void EpollController::close(function<void(void)> callback) {
     closeCallback = callback;
     shouldClose = true;
 }

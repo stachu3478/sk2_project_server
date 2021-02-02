@@ -5,8 +5,8 @@ KickMessage::~KickMessage() {
 }
 
 char* KickMessage::serialize() {
-    char* str = new char[reason->size() + 2];
-    str[0] = 9;
+    char* str = SimpleMessageOut::serialize();
     str[1] = reason->size();
+    strcpy(str + 2, reason->c_str());
     return str;
 }

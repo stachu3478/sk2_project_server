@@ -1,6 +1,8 @@
 #include "MoveUnitsMessage.h"
 
-MoveUnitsMessage::MoveUnitsMessage(std::function<void(MoveUnitsMessage*)> cb, int maxBatchSize)  {
+using namespace std;
+
+MoveUnitsMessage::MoveUnitsMessage(function<void(MoveUnitsMessage*)> cb, int maxBatchSize)  {
     lengthRead = false;
     this->callback = cb;
     this->maxBatchSize = maxBatchSize;

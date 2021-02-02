@@ -1,13 +1,14 @@
 #include "GameJoinedMessage.h"
 
+using namespace std;
+
 GameJoinedMessage::~GameJoinedMessage() {}
 
 char* GameJoinedMessage::serialize() {
-    char* str = new char[5 + units.size() * 14];
-    str[0] = 1;
+    char* str = SimpleMessageOut::serialize();
     insertInteger(str + 1, units.size());
     int ptr = 5;
-    for (std::pair<int, UnitPtr> unitPair : units) { // 14 bytes per unit
+    for (pair<int, UnitPtr> unitPair : units) { // 14 bytes per unit
         UnitPtr unit = unitPair.second;
         insertInteger(str + ptr, unit->getId());
         ptr += 4;

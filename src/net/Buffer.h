@@ -4,7 +4,7 @@
 #include "string.h"
 #include "bits/stdc++.h"
 
-// POOR YOU, std::stringbuf!
+// Buffer which limit is only the memory allocation
 class Buffer {
     public:
         Buffer(){  };

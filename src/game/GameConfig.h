@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <fstream>
 #include <string>
+#include "Logger.h"
 
 struct GameUnitConfig
 {
@@ -16,7 +17,7 @@ struct GameUnitConfig
 };
 
 struct GameConfig {
-    GameConfig();
+    GameConfig(Logger* logger);
     unsigned int port = 34780;
     unsigned int maxPlayersCountPerGame = 4;
     unsigned int minPlayersCountToStart = 2;

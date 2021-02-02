@@ -1,5 +1,7 @@
 #include "Server.h"
 
+using namespace std;
+
 Server::Server() {
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -35,7 +37,7 @@ void Server::listenAt(int port) {
     printf("Listening on *:%d\n", port);
 }
 
-void Server::shutdown(std::function<void(void)> callback) {
+void Server::shutdown(function<void(void)> callback) {
     epollController.removeListener(this);
     epollController.close([this, callback]() {
         this->closeAll();

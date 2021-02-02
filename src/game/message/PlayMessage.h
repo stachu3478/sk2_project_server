@@ -9,7 +9,7 @@
 class PlayMessage : public GameMessage {
     public:
         PlayMessage(std::function<void(PlayMessage*)> cb);
-        virtual ~PlayMessage();
+        virtual ~PlayMessage() {};
 
         std::string getNickname() { return nickname; };
 

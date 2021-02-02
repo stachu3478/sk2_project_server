@@ -1,5 +1,7 @@
 #include "Player.h"
 
+using namespace std;
+
 Player::Player(Client* c) {
     client = c;
     client->setMessageIdentifier(&messageIdentifier);
@@ -29,7 +31,7 @@ void Player::kick(const char* reason) {
 }
 
 void Player::addUnit(UnitPtr unit) {
-    this->units.insert(std::pair<int, UnitPtr>(unit->getId(), unit));
+    this->units.insert(pair<int, UnitPtr>(unit->getId(), unit));
     if (!isOffline()) {
         ((GameMessageIdentifier*)client->getMessageIdentifier())->setUnitBatchSize(units.size());
     }

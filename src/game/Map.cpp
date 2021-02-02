@@ -1,5 +1,7 @@
 #include "Map.h"
 
+using namespace std;
+
 Map::Map(unsigned int width, unsigned int height) {
     this->width = width;
     this->height = height;
@@ -45,14 +47,14 @@ Point Map::findBetterPositionOutOf(Point* p0, Point* p2) {
     if (bestDistance == 1 && !isReachable(p2)) return point;
     Point* best = nullptr;
     bool found = false;
-    std::unordered_set<Point*> searched;
-    std::unordered_map<Point*, Point*> parentPoints;
-    std::unordered_set<int> visited;
+    unordered_set<Point*> searched;
+    unordered_map<Point*, Point*> parentPoints;
+    unordered_set<int> visited;
     searched.insert(p0);
     int maxDepth = 10;
     int depth = maxDepth++;
     while(!found && searched.size() > 0 && depth-- > 0) {
-        std::unordered_set<Point*> newPoints;
+        unordered_set<Point*> newPoints;
         for (Point* p1 : searched) {
             for (int offsetX = -1; offsetX <= 1; offsetX++) {
                 for (int offsetY = -1; offsetY <= 1; offsetY++) {
@@ -69,7 +71,7 @@ Point Map::findBetterPositionOutOf(Point* p0, Point* p2) {
                     }
                     int distance = p1->getDistanceTo(Point(p2, -offsetX, -offsetY));
                     newPoints.insert(p);
-                    parentPoints.insert(std::pair<Point*, Point*>(p, p1));
+                    parentPoints.insert(pair<Point*, Point*>(p, p1));
                     if (distance >= bestDistance) continue;
                     best = p;
                     bestDistance = distance;
@@ -102,9 +104,9 @@ UnitPtr Map::findUnitInRangeByOwnerId(Point* pos, int ownerId, int range) {
     return foundUnit;
 }
 
-std::unordered_set<UnitPtr> Map::findUnitsInRangeByOwnerId(PositionedPtr entity, int ownerId, int range) {
+unordered_set<UnitPtr> Map::findUnitsInRangeByOwnerId(PositionedPtr entity, int ownerId, int range) {
     Point* pos = entity->getPosition();
-    std::unordered_set<UnitPtr> foundUnits;
+    unordered_set<UnitPtr> foundUnits;
     rangeIterator(pos, range, [this, ownerId, &foundUnits](UnitPtr unit) {
         if (unit->getOwnerId() == ownerId) foundUnits.insert(unit);
         return true;
@@ -112,7 +114,7 @@ std::unordered_set<UnitPtr> Map::findUnitsInRangeByOwnerId(PositionedPtr entity,
     return foundUnits;
 }
 
-void Map::rangeIterator(Point* p, int range, std::function<bool(UnitPtr)> callback) {
+void Map::rangeIterator(Point* p, int range, function<bool(UnitPtr)> callback) {
     Point pos(p->x, p->y);
     int xDir = 1;
     int yDir = 0;

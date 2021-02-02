@@ -25,12 +25,12 @@
 
 class Game {
     public:
-        Game(GameConfig config, Logger* logger);
+        Game(GameConfig* config, Logger* logger);
         virtual ~Game();
 
         void tick();
         bool isFinished();
-        bool isFull() { return players.size() >= config.maxPlayersCountPerGame; };
+        bool isFull() { return players.size() >= config->maxPlayersCountPerGame; };
         bool canJoin(PlayerPtr p) { return !bannedPlayers.contains(p) && (!started || !hasWinner()) && !isFull(); };
         void addPlayer(PlayerPtr p);
         void onChangeGame(std::function<void(PlayerPtr)> cb) { changeGameCallback = cb; };
@@ -38,7 +38,7 @@ class Game {
         void removePlayer(PlayerPtr p);
     private:
         void removePlayerStuff(PlayerPtr p);
-        bool isReadyToStart() { return players.size() >= config.minPlayersCountToStart; };
+        bool isReadyToStart() { return players.size() >= config->minPlayersCountToStart; };
         void start();
         bool hasWinner();
         void addToGame(PlayerPtr player);
@@ -51,7 +51,7 @@ class Game {
         std::unordered_map<int, PlayerPtr> players;
         std::unordered_set<PlayerPtr> bannedPlayers;
         bool started = false;
-        GameConfig config;
+        GameConfig* config;
         int ownerCounter = 0;
         int countdownTicks;
         bool broadcasting = false;

@@ -1,8 +1,14 @@
 #include "Logger.h"
 
-void Logger::log(std::string str) {
-    auto currTime = std::time(nullptr);
-    char* textDate = std::ctime(&currTime);
-    textDate[std::strlen(textDate) - 1] = ' ';
+using namespace std;
+
+void Logger::log(string str) {
+    if (!file.is_open()) {
+        printf("%s\n", str.c_str());
+        return;
+    }
+    auto currTime = time(nullptr);
+    char* textDate = ctime(&currTime);
+    textDate[strlen(textDate) - 1] = ' ';
     file << "[" << textDate << "] " << str << "\n";
 }

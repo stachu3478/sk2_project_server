@@ -30,7 +30,7 @@ class GameController {
         void removePlayer(PlayerPtr p);
         std::unordered_set<Game*> games;
         std::unordered_set<PlayerPtr> players;
-        GameConfig config;
-        Server server;
         Logger logger{"log.txt"};
+        GameConfig config{&logger};
+        Server server;
 };

@@ -1,6 +1,8 @@
 #include "AttackUnitsMessage.h"
 
-AttackUnitsMessage::AttackUnitsMessage(std::function<void(AttackUnitsMessage*)> cb, int maxBatchSize)  {
+using namespace std;
+
+AttackUnitsMessage::AttackUnitsMessage(function<void(AttackUnitsMessage*)> cb, int maxBatchSize)  {
     lengthRead = false;
     this->callback = cb;
     this->maxBatchSize = maxBatchSize;

@@ -1,17 +1,18 @@
 #include <string.h>
-#include "../../net/MessageOut.h"
+#include "SimpleMessageOut.h"
 #include "../GameConfig.h"
 #include "messageHelper.h"
 
-class LobbyJoinedMessage : public MessageOut {
+class LobbyJoinedMessage : public SimpleMessageOut {
     public:
-        LobbyJoinedMessage(GameConfig config, int ownerId, int countdownSeconds) { this->config = config; this->ownerId = ownerId; this->countdownSeconds = countdownSeconds; };
+        LobbyJoinedMessage(GameConfig* config, int ownerId, int countdownSeconds) { this->config = config; this->ownerId = ownerId; this->countdownSeconds = countdownSeconds; };
         virtual ~LobbyJoinedMessage();
 
         char* serialize();
         int length() { return 13; };
+        char getType() { return 0; };
     private:
-        GameConfig config;
+        GameConfig* config;
         int ownerId;
         int countdownSeconds;
 };

@@ -3,8 +3,7 @@
 UnitMovedMessage::~UnitMovedMessage() {}
 
 char* UnitMovedMessage::serialize() {
-    char* msg = new char[13];
-    msg[0] = 3;
+    char* msg = SimpleMessageOut::serialize();
     insertInteger(msg + 1, unitId);
     insertInteger(msg + 5, toX);
     insertInteger(msg + 9, toY);

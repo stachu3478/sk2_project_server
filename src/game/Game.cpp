@@ -1,10 +1,12 @@
 #include "Game.h"
 
-Game::Game(GameConfig config, Logger* logger) :
-map{config.mapWidth, config.mapHeight},
-spawner{&map, &factory, &config} {
+using namespace std;
+
+Game::Game(GameConfig* config, Logger* logger) :
+map{config->mapWidth, config->mapHeight},
+spawner{&map, &factory, config} {
     this->config = config;
-    this->countdownTicks = config.countdownTicks();
+    this->countdownTicks = config->countdownTicks();
     this->logger = logger;
     logger->log("Creating new game...");
 }
@@ -34,7 +36,7 @@ void Game::addPlayer(PlayerPtr p) {
     p->setOwnerId(ownerCounter++);
     p->setScore(0);
 
-    LobbyJoinedMessage m(config, p->getOwnerId(), countdownTicks * config.tickTime / 1000);
+    LobbyJoinedMessage m(config, p->getOwnerId(), countdownTicks * config->tickTime / 1000);
     p->emit(&m);
 
     PlayerJoinedMessage pJoinedMessage(p->getNickname(), p->getOwnerId());
@@ -44,7 +46,7 @@ void Game::addPlayer(PlayerPtr p) {
         PlayerJoinedMessage playerJoinedMessage(player->getNickname(), player->getOwnerId());
         p->emit(&playerJoinedMessage); // inform p about joining all players
     }
-    players.insert(std::pair(p->getOwnerId(), p));
+    players.insert(pair(p->getOwnerId(), p));
     GameMessageIdentifier* gameMessageIdentifier = p->getMessageIdentifier();
     gameMessageIdentifier->setMessageFilter(ingameMessageFilter);
     if (started) {
@@ -160,10 +162,10 @@ void Game::removePlayerStuff(PlayerPtr p) {
 void Game::tick() {
     if (!started) {
         if (isReadyToStart()) start();
-        else countdownTicks = config.countdownTicks();
+        else countdownTicks = config->countdownTicks();
         return;
     }
-    std::unordered_set<UnitPtr> toBeActivated;
+    unordered_set<UnitPtr> toBeActivated;
     for (UnitPtr unit : activeUnits) {
         if (unit->isIdle()) {
             deactivatedUnits.insert(unit);
@@ -172,19 +174,19 @@ void Game::tick() {
         if (unit->isAttacking()) {
             UnitPtr targetUnit = factory.getUnit(unit->getTargetUnitId());
             if (targetUnit == nullptr) {
-                UnitPtr anotherTarget = map.findUnitInRangeByOwnerId(unit->getPosition(), unit->getTargetUnitOwnerId(), config.units.maxAttackDistance);
+                UnitPtr anotherTarget = map.findUnitInRangeByOwnerId(unit->getPosition(), unit->getTargetUnitOwnerId(), config->units.maxAttackDistance);
                 if (anotherTarget != nullptr) {
                     unit->setTargetUnit(anotherTarget); // choose another target near him
                     continue;
                 }
-                anotherTarget = map.findUnitInRangeByOwnerId(unit->getTarget(), unit->getTargetUnitOwnerId(), config.units.maxAttackDistance);
+                anotherTarget = map.findUnitInRangeByOwnerId(unit->getTarget(), unit->getTargetUnitOwnerId(), config->units.maxAttackDistance);
                 if (anotherTarget != nullptr) unit->setTargetUnit(anotherTarget); // choose another target near last target
                 else unit->stopAttacking(); 
                 continue;
             }
-            if (unit->getDistance(std::dynamic_pointer_cast<Positioned>(targetUnit)) < config.units.maxAttackDistance) {
+            if (unit->getDistance(dynamic_pointer_cast<Positioned>(targetUnit)) < config->units.maxAttackDistance) {
                 unit->stopMoving();
-                if (unit->attack(targetUnit, config.units.attackTickColldown)) {
+                if (unit->attack(targetUnit, config->units.attackTickColldown)) {
                     UnitAttackedMessage m(unit, targetUnit);
                     broadcast(&m);
                     if (targetUnit->isDead()) {
@@ -196,7 +198,7 @@ void Game::tick() {
                         broadcast(&mScore);
                         //metoda dodaje punkty getOwnerId(unit)
                     } else if (targetUnit->isIdle()) {
-                        for (UnitPtr avenger : map.findUnitsInRangeByOwnerId(std::dynamic_pointer_cast<Positioned>(targetUnit), targetUnit->getOwnerId(), config.units.maxAttackDistance)) {
+                        for (UnitPtr avenger : map.findUnitsInRangeByOwnerId(dynamic_pointer_cast<Positioned>(targetUnit), targetUnit->getOwnerId(), config->units.maxAttackDistance)) {
                             if (avenger->isIdle()) {
                                 avenger->setTargetUnit(unit); // revenge
                                 toBeActivated.insert(avenger);
@@ -207,7 +209,7 @@ void Game::tick() {
             } else unit->setTarget(targetUnit->getPosition());
         }
         if (unit->isMoving()) {
-            if (map.moveTowards(unit, config.units.moveTickCooldown)) {
+            if (map.moveTowards(unit, config->units.moveTickCooldown)) {
                 if (unit->hasMoved()) {
                     UnitMovedMessage m(unit);
                     broadcast(&m);

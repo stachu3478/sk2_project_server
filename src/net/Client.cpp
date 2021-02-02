@@ -1,5 +1,7 @@
 #include "Client.h"
 
+using namespace std;
+
 Client::Client(int fd) : messageWriter{fd} {
     this->fd = fd;
 }
@@ -17,7 +19,7 @@ void Client::setMessageIdentifier(MessageIdentifier* i) {
     messageIdentifier->setFd(fd);
 }
 
-void Client::onDisconnection(std::function<void()> c) {
+void Client::onDisconnection(function<void()> c) {
     disconnectionCallback = c;
 }
 

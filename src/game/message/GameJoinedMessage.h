@@ -3,16 +3,17 @@
 #include <string.h>
 #include <unordered_map>
 #include "../Unit.h"
-#include "../../net/MessageOut.h"
+#include "SimpleMessageOut.h"
 #include "messageHelper.h"
 
-class GameJoinedMessage : public MessageOut {
+class GameJoinedMessage : public SimpleMessageOut {
     public:
         GameJoinedMessage(std::unordered_map<int, UnitPtr> units) { this->units = units; };
         virtual ~GameJoinedMessage();
 
         char* serialize();
         int length() { return 5 + units.size() * 14; };
+        char getType() { return 1; }
     private:
         std::unordered_map<int, UnitPtr> units;
 };

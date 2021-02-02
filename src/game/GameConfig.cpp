@@ -1,57 +1,68 @@
 #include "GameConfig.h"
 
+using namespace std;
+
 const char* FILENAME = "config.txt";
-GameConfig::GameConfig() {
+GameConfig::GameConfig(Logger* logger) {
     if (access(FILENAME, F_OK) == -1) {
         // save
-        std::ofstream file(FILENAME);
-        file << "> General:" << std::endl;
-        file << "Server port:" << std::endl;
-        file << port << std::endl;
-        file << "Max players count per game:" << std::endl;
-        file << maxPlayersCountPerGame << std::endl;
-        file << "Min players count to start:" << std::endl;
-        file << minPlayersCountToStart << std::endl;
-        file << "Map width:" << std::endl;
-        file << mapWidth << std::endl;
-        file << "Map height:" << std::endl;
-        file << mapHeight << std::endl;
-        file << "Countdown in seconds:" << std::endl;
-        file << countdownSeconds << std::endl;
-        file << "Tick time in miliseconds:" << std::endl;
-        file << tickTime << std::endl;
-        file << "> Units:" << std::endl;
-        file << "Initial count:" << std::endl;
-        file << units.initialCount << std::endl;
-        file << "Move tick cooldown:" << std::endl;
-        file << units.moveTickCooldown << std::endl;
-        file << "Attack tick cooldown:" << std::endl;
-        file << units.attackTickColldown << std::endl;
-        file << "Attack damage:" << std::endl;
-        file << units.attackDamage << std::endl;
-        file << "Max hitpoints:" << std::endl;
-        file << units.hitpoints << std::endl;
-        file << "Max attack distance:" << std::endl;
-        file << units.maxAttackDistance << std::endl;
+        ofstream file(FILENAME);
+        if (!file.is_open()) {
+            logger->log("Warning: Failed to generate configuration file from defaults.");
+            return;
+        }
+        file << "> General:" << endl;
+        file << "Server port:" << endl;
+        file << port << endl;
+        file << "Max players count per game:" << endl;
+        file << maxPlayersCountPerGame << endl;
+        file << "Min players count to start:" << endl;
+        file << minPlayersCountToStart << endl;
+        file << "Map width:" << endl;
+        file << mapWidth << endl;
+        file << "Map height:" << endl;
+        file << mapHeight << endl;
+        file << "Countdown in seconds:" << endl;
+        file << countdownSeconds << endl;
+        file << "Tick time in miliseconds:" << endl;
+        file << tickTime << endl;
+        file << "> Units:" << endl;
+        file << "Initial count:" << endl;
+        file << units.initialCount << endl;
+        file << "Move tick cooldown:" << endl;
+        file << units.moveTickCooldown << endl;
+        file << "Attack tick cooldown:" << endl;
+        file << units.attackTickColldown << endl;
+        file << "Attack damage:" << endl;
+        file << units.attackDamage << endl;
+        file << "Max hitpoints:" << endl;
+        file << units.hitpoints << endl;
+        file << "Max attack distance:" << endl;
+        file << units.maxAttackDistance << endl;
         file.close();
     } else {
         // load
-        std::ifstream file(FILENAME);
-        std::string valueLine;
-        while (std::getline(file, valueLine)) {
-            if (valueLine == "Server port:") file >> port;
-            if (valueLine == "Max players count per game:") file >> maxPlayersCountPerGame;
-            if (valueLine == "Min players count to start:") file >> minPlayersCountToStart;
-            if (valueLine == "Map width:") file >> mapWidth;
-            if (valueLine == "Map height:") file >> mapHeight;
-            if (valueLine == "Countdown in seconds:") file >> countdownSeconds;
-            if (valueLine == "Tick time in miliseconds:") file >> tickTime;
-            if (valueLine == "Initial count:") file >> units.initialCount;
-            if (valueLine == "Move tick cooldown:") file >> units.moveTickCooldown;
-            if (valueLine == "Attack tick cooldown:") file >> units.attackTickColldown;
-            if (valueLine == "Attack damage:") file >> units.attackDamage;
-            if (valueLine == "Max hitpoints:") file >> units.hitpoints;
-            if (valueLine == "Max attack distance:") file >> units.maxAttackDistance;
+        ifstream file(FILENAME);
+        if (!file.is_open()) {
+            logger->log("Warning: Failed to load configuration, using defaults.");
+            return;
+        }
+        string keyLine;
+        while (getline(file, keyLine)) {
+            if (keyLine == "Server port:") file >> port;
+            else if (keyLine == "Max players count per game:") file >> maxPlayersCountPerGame;
+            else if (keyLine == "Min players count to start:") file >> minPlayersCountToStart;
+            else if (keyLine == "Map width:") file >> mapWidth;
+            else if (keyLine == "Map height:") file >> mapHeight;
+            else if (keyLine == "Countdown in seconds:") file >> countdownSeconds;
+            else if (keyLine == "Tick time in miliseconds:") file >> tickTime;
+            else if (keyLine == "Initial count:") file >> units.initialCount;
+            else if (keyLine == "Move tick cooldown:") file >> units.moveTickCooldown;
+            else if (keyLine == "Attack tick cooldown:") file >> units.attackTickColldown;
+            else if (keyLine == "Attack damage:") file >> units.attackDamage;
+            else if (keyLine == "Max hitpoints:") file >> units.hitpoints;
+            else if (keyLine == "Max attack distance:") file >> units.maxAttackDistance;
+            else if (!keyLine.starts_with("> ")) logger->log(string("Warning: Unknown configuration property: ") + keyLine);
         }
         file.close();
     }
