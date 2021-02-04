@@ -1,12 +1,8 @@
 #include "KickMessage.h"
 
-KickMessage::~KickMessage() {
-    delete reason;
-}
-
 char* KickMessage::serialize() {
     char* str = SimpleMessageOut::serialize();
-    str[1] = reason->size();
-    strcpy(str + 2, reason->c_str());
+    str[1] = reasonStr.size();
+    strcpy(str + 2, reasonStr.c_str());
     return str;
 }

@@ -3,7 +3,7 @@
 using namespace std;
 
 GameController::GameController() {
-    server.setClientCallback([this](Client* c){
+    server.setClientCallback([this](ClientPtr c){
         PlayerPtr p{new Player(c)};
         this->addPlayer(p);
     });
@@ -56,7 +56,7 @@ void GameController::addPlayer(PlayerPtr player) {
         removePlayer(player);
     });
     messageIdentifier->setMessageFilter(newPlayerMessageFilter);
-    Client* client = player->getClient();
+    ClientPtr client = player->getClient();
     client->setMessageIdentifier(messageIdentifier);
 }
 

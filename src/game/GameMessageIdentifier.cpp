@@ -1,7 +1,5 @@
 #include "GameMessageIdentifier.h"
 
-GameMessageIdentifier::~GameMessageIdentifier() {}
-
 Message* GameMessageIdentifier::createMessage(Buffer* buffer) {
     if (buffer->in_avail() == 0) return nullptr;
     char messageType = buffer->sbumpc();

@@ -89,11 +89,10 @@ void Game::start() {
 
 void Game::addToGame(PlayerPtr player) {
     spawner.spawnPlayer(player);
-    Client* client = player->getClient();
+    ClientPtr client = player->getClient();
     if (client == nullptr) return; // network disconnected player counts to the game
     GameMessageIdentifier* gameMessageIdentifier = player->getMessageIdentifier();
-    for (auto v: players)
-    {
+    for (auto v: players) {
         PlayersScoreChangedMessage m(v.second);
         player->emit(&m);
     }

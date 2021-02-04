@@ -3,31 +3,23 @@
 #include <unistd.h>
 #include <functional>
 #include <memory>
-#include "../events/EpollListener.h"
 #include "./MessageIdentifier.h"
-#include "./MessageWriter.h"
 #include "./MessageOut.h"
 
-class Client : public EpollListener {
+class Client {
     public:
-        Client(int fd);
-        virtual ~Client();
+        Client() {};
+        virtual ~Client() {};
 
-        void disconnect();
-        void setMessageIdentifier(MessageIdentifier* i);
-        MessageIdentifier* getMessageIdentifier() { return messageIdentifier; };
-        void onDisconnection(std::function<void()> cb);
-        void emit(MessageOut* m);
-        void flush();
-
-        int getFd();
-        void triggerIn();
-        void triggerOut();
-        void error();
-        void closed() { disconnect(); };
-    private:
-        int fd;
-        MessageIdentifier* messageIdentifier;
-        MessageWriter messageWriter;
+        virtual void disconnect() = 0;
+        virtual void setMessageIdentifier(MessageIdentifier* i) = 0;
+        virtual MessageIdentifier* getMessageIdentifier() = 0;
+        void onDisconnection(std::function<void()> c) { disconnectionCallback = c; };
+        virtual void emit(MessageOut* m) = 0;
+        virtual void flush() = 0;
+        virtual bool isOffline() = 0;
+    protected:
         std::function<void()> disconnectionCallback;
 };
+
+typedef std::shared_ptr<Client> ClientPtr;

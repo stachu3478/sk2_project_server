@@ -16,7 +16,7 @@ class InvalidMessageError : public std::exception {};
 class GameMessageIdentifier : public MessageIdentifier {
     public:
         GameMessageIdentifier() { };
-        virtual ~GameMessageIdentifier();
+        virtual ~GameMessageIdentifier() {};
 
         void setMessageFilter(std::function<bool(char)> f) { filter = f; };
         void onPlay(std::function<void(PlayMessage*)> cb) { this->playCallback = cb; };

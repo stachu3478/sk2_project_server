@@ -1,7 +1,8 @@
 add_library(Buffer OBJECT Buffer)
+add_library(MessageIdentifier OBJECT MessageIdentifier)
+add_library(MessageWriter OBJECT MessageWriter)
 
 add_executable(BufferTest BufferTest.cpp $<TARGET_OBJECTS:Buffer>)
-target_compile_options(BufferTest PRIVATE "--std=c++2a" "-W" "-Wall" "-Wextra" "-pedantic" "-Werror")
 add_test(NAME BufferTest-properly_writes_and_reads_single_value COMMAND BufferTest properly_writes_and_reads_single_value)
 add_test(NAME BufferTest-properly_writes_and_reads_multiple_values COMMAND BufferTest properly_writes_and_reads_multiple_values)
 add_test(NAME BufferTest-properly_reads_multiple_values COMMAND BufferTest properly_reads_multiple_values)

@@ -47,17 +47,14 @@ void Server::shutdown(function<void(void)> callback) {
 }
 
 void Server::closeAll() {
-    for (Client* c : clients) {
-        c->disconnect();
-        delete c;
-    }
+    for (NettyClientPtr c : clients) c->disconnect();
     close(sockFd);
     clients.clear();
 }
 
-void Server::clientDisconnected(Client* c) {
+void Server::clientDisconnected(NettyClientPtr c) {
+    epollController.removeListener(c.get()); // Mandatory before erasing
     clients.erase(c);
-    epollController.removeListener(c);
 }
 
 void Server::triggerIn() {
@@ -71,11 +68,12 @@ void Server::triggerIn() {
         perror("fctnl");
         throw new ConnectException();
     }
-    Client* client = new Client(clientFd);
-    epollController.addListener(client);
-    clients.insert(client);
-    client->onDisconnection([this, client]{
-        this->clientDisconnected(client);
+    NettyClientPtr nettyClient {new NettyClient(clientFd)};
+    ClientPtr client = dynamic_pointer_cast<Client>(nettyClient);
+    epollController.addListener(nettyClient.get());
+    clients.insert(nettyClient);
+    client->onDisconnection([this, nettyClient]{
+        this->clientDisconnected(nettyClient);
     });
     clientCallback(client);
 }

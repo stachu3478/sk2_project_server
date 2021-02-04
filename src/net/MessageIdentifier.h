@@ -12,8 +12,8 @@ class MessageReadError : public std::exception {};
 
 class MessageIdentifier {
     public:
-        MessageIdentifier();
-        virtual ~MessageIdentifier();
+        MessageIdentifier() {};
+        virtual ~MessageIdentifier() {};
 
         void setFd(int fd) { this->fd = fd; };
         int readMessages();

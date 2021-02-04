@@ -35,12 +35,20 @@ void fail(const char* message) {
     fail();
 }
 
+void assertFalse(bool value) {
+    if (value) fail();
+}
+
+void assertFalse(bool value, const char* messageOnFailure) {
+    if (value) fail(messageOnFailure);
+}
+
 void assertTrue(bool value) {
-    if (!value) fail();
+    assertFalse(!value);
 }
 
 void assertTrue(bool value, const char* messageOnFailure) {
-    if (!value) fail(messageOnFailure);
+    assertFalse(!value, messageOnFailure);
 }
 
 template <class X>

@@ -1,1 +1,0 @@
-add_library(events OBJECT EpollController)

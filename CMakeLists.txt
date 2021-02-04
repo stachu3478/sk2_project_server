@@ -10,21 +10,21 @@ add_subdirectory(src)
 add_executable(main
     src/events/EpollController
     src/net/Server
-    src/net/Client
+    src/net/NettyClient
     $<TARGET_OBJECTS:Buffer>
     src/game/GameConfig
     src/game/Logger
     src/game/Unit
     $<TARGET_OBJECTS:messageHelper>
     src/game/message/GameMessage
-    src/game/message/KickMessage
-    src/game/message/PlayMessage
+    $<TARGET_OBJECTS:PlayMessage>
+    $<TARGET_OBJECTS:KickMessage>
     src/game/message/GameJoinedMessage
     src/game/message/LobbyJoinedMessage
     src/game/message/PlayerJoinedMessage
     src/game/message/UnitMovedMessage
-    src/game/message/MoveUnitsMessage
-    src/game/message/AttackUnitsMessage
+    $<TARGET_OBJECTS:MoveUnitsMessage>
+    $<TARGET_OBJECTS:AttackUnitsMessage>
     src/game/message/UnitAttackedMessage
     src/game/message/UnitDestroyedMessage
     src/game/message/UnitSpawnedMessage
@@ -33,12 +33,12 @@ add_executable(main
     src/game/UnitFactory
     src/game/Map
     src/game/PlayerSpawner
-    src/game/Player
+    $<TARGET_OBJECTS:Player>
     src/game/Game
-    src/net/MessageIdentifier
-    src/net/MessageWriter
+    $<TARGET_OBJECTS:MessageIdentifier>
+    $<TARGET_OBJECTS:MessageWriter>
     src/game/GameController
-    src/game/GameMessageIdentifier
+    $<TARGET_OBJECTS:GameMessageIdentifier>
 main.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})

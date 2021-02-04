@@ -15,7 +15,7 @@
 #include <functional>
 #include "../events/EpollListener.h"
 #include "../events/EpollController.h"
-#include "./Client.h"
+#include "NettyClient.h"
 
 class ConnectException : public std::exception {};
 
@@ -28,8 +28,8 @@ class Server : public EpollListener {
         void listenAt(int port);
         void listenFor(int miliseconds) { epollController.listen(miliseconds); };
         void shutdown(std::function<void(void)> callback);
-        void setClientCallback(std::function<void(Client*)> c) { clientCallback = c; };
-        void clientDisconnected(Client* c);
+        void setClientCallback(std::function<void(ClientPtr)> c) { clientCallback = c; };
+        void clientDisconnected(NettyClientPtr c);
 
         int getFd() { return sockFd; };
         void triggerIn();
@@ -38,8 +38,8 @@ class Server : public EpollListener {
         bool alive = false;
         sockaddr_in addr;
         int sockFd;
-        std::function<void(Client*)> clientCallback;
-        std::unordered_set<Client*> clients;
+        std::function<void(ClientPtr)> clientCallback;
+        std::unordered_set<NettyClientPtr> clients;
         EpollController epollController;
         std::function<void()> closeCallback;
         void closeAll();

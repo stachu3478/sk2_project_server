@@ -10,16 +10,16 @@
 
 class Player {
     public:
-        Player(Client* c);
+        Player(ClientPtr c);
         virtual ~Player();
 
-        Client* getClient() { return client; };
+        ClientPtr getClient() { return client; };
         GameMessageIdentifier* getMessageIdentifier() { return &messageIdentifier; };
         
-        bool isOffline() { return client == nullptr; };
+        bool isOffline() { return client->isOffline(); };
         void kick(const char* reason);
-        void emit(MessageOut* m);
-        void flush();
+        void emit(MessageOut* m) { if (!isOffline()) client->emit(m); };
+        void flush() { if (!isOffline()) client->flush(); };
         void setOwnerId(int id) { this->ownerId = id; };
         int getOwnerId() { return this->ownerId; };
 
@@ -40,7 +40,7 @@ class Player {
     private:
         GameMessageIdentifier messageIdentifier;
         std::string nickname;
-        Client* client;
+        ClientPtr client;
         int ownerId;
         int score;
         std::unordered_map<int, UnitPtr> units;

@@ -1,11 +1,5 @@
 #include "MessageIdentifier.h"
 
-MessageIdentifier::MessageIdentifier() {
-    
-}
-
-MessageIdentifier::~MessageIdentifier() {}
-
 int MessageIdentifier::readMessages() {
     int charsRead;
     int totalRead = 0;
