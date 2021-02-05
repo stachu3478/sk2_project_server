@@ -62,7 +62,7 @@ GameConfig::GameConfig(Logger* logger) {
             else if (keyLine == "Attack damage:") file >> units.attackDamage;
             else if (keyLine == "Max hitpoints:") file >> units.hitpoints;
             else if (keyLine == "Max attack distance:") file >> units.maxAttackDistance;
-            else if (!keyLine.starts_with("> ")) logger->log(string("Warning: Unknown configuration property: ") + keyLine);
+            else if (!keyLine.starts_with("> ") && !keyLine.empty()) logger->log(string("Warning: Unknown configuration property: ") + keyLine);
         }
         file.close();
     }
