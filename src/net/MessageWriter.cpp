@@ -9,6 +9,7 @@ MessageWriter::~MessageWriter() {}
 void MessageWriter::emit(MessageOut* m) {
     char* messageString = m->serialize();
     buffer.sputn(messageString, m->length());
+    delete[] messageString;
 }
 
 void MessageWriter::writeMessages() {

@@ -3,12 +3,11 @@
 #include "src/game/GameController.h"
 #include "src/events/EpollController.h"
 
+void noop(){}
+
 GameController* server;
 void ctrl_c(int) {
-    server->stop([](){
-        delete server;
-        exit(0);
-    });
+    server->stop(noop);
 }
 
 int main(int argc, char** argv) {
@@ -16,9 +15,11 @@ int main(int argc, char** argv) {
     signal(SIGINT, ctrl_c);
     signal(SIGPIPE, SIG_IGN);
 
-    server = new GameController();
+    GameController gameController;
+    server = &gameController;
     if (argc > 1) {
         server->setServerPort(atoi(argv[1]));
     }
-    server->start();
+    server->start(); // wont stop until stop will be called externally
+    return 0;
 }
