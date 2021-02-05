@@ -3,10 +3,10 @@
 #include <string>
 #include <unordered_map>
 #include <memory>
-#include "message/KickMessage.h"
+#include "message/out/KickMessage.h"
 #include "../net/Client.h"
 #include "GameMessageIdentifier.h"
-#include "Unit.h"
+#include "core/Unit.h"
 
 class Player {
     public:

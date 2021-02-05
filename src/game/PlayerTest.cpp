@@ -1,4 +1,4 @@
-#include "message/SimpleMessageOut.h"
+#include "message/out/SimpleMessageOut.h"
 #include "../net/Client.h"
 #include "Player.h"
 #include "../spec/spec.h"

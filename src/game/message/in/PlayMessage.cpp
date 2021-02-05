@@ -2,10 +2,6 @@
 
 using namespace std;
 
-PlayMessage::PlayMessage(function<void(PlayMessage*)> cb)  {
-    this->callback = cb;
-}
-
 void PlayMessage::readBuffer(Buffer* buffer) {
     int bytesToRead = buffer->in_avail();
     if (bytesToRead == 0) return;

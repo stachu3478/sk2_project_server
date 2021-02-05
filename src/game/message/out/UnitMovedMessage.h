@@ -2,9 +2,9 @@
 
 #include <string.h>
 #include <unordered_map>
-#include "../Unit.h"
+#include "../../core/Unit.h"
 #include "SimpleMessageOut.h"
-#include "messageHelper.h"
+#include "../messageHelper.h"
 
 class UnitMovedMessage : public SimpleMessageOut {
     public:

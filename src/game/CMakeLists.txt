@@ -5,13 +5,11 @@ add_library(Player OBJECT Player)
 
 add_executable(PlayerTest PlayerTest.cpp
     $<TARGET_OBJECTS:Buffer>
-    $<TARGET_OBJECTS:MessageIdentifier>
-    $<TARGET_OBJECTS:MessageWriter>
     $<TARGET_OBJECTS:messageHelper>
-    $<TARGET_OBJECTS:PlayMessage>
-    $<TARGET_OBJECTS:KickMessage>
-    $<TARGET_OBJECTS:MoveUnitsMessage>
     $<TARGET_OBJECTS:AttackUnitsMessage>
+    $<TARGET_OBJECTS:MoveUnitsMessage>
+    $<TARGET_OBJECTS:KickMessage>
+    $<TARGET_OBJECTS:PlayMessage>
     $<TARGET_OBJECTS:GameMessageIdentifier>
     $<TARGET_OBJECTS:Player>
 )

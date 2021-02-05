@@ -1,7 +1,7 @@
 #include <string.h>
 #include "SimpleMessageOut.h"
-#include "../GameConfig.h"
-#include "messageHelper.h"
+#include "../../core/GameConfig.h"
+#include "../messageHelper.h"
 
 class LobbyJoinedMessage : public SimpleMessageOut {
     public:

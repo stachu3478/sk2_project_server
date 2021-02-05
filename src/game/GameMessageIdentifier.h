@@ -3,13 +3,13 @@
 #include <sstream>
 #include <exception>
 #include <functional>
+#include "core/MessageFilter.h"
 #include "../net/Buffer.h"
 #include "../net/MessageIdentifier.h"
-#include "./message/SimpleMessage.h"
-#include "./message/PlayMessage.h"
-#include "./message/MoveUnitsMessage.h"
-#include "./message/AttackUnitsMessage.h"
-#include "MessageFilter.h"
+#include "./message/in/SimpleMessage.h"
+#include "./message/in/PlayMessage.h"
+#include "./message/in/MoveUnitsMessage.h"
+#include "./message/in/AttackUnitsMessage.h"
 
 class InvalidMessageError : public std::exception {};
 

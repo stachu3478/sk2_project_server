@@ -1,10 +1,12 @@
-add_library(messageHelper OBJECT messageHelper)
-add_library(PlayMessage OBJECT PlayMessage)
-add_library(KickMessage OBJECT KickMessage)
-add_library(MoveUnitsMessage OBJECT MoveUnitsMessage)
-add_library(AttackUnitsMessage OBJECT AttackUnitsMessage)
+add_subdirectory(in)
+add_subdirectory(out)
 
-add_executable(messageHelperTest messageHelperTest.cpp $<TARGET_OBJECTS:Buffer> $<TARGET_OBJECTS:messageHelper>)
+add_library(messageHelper OBJECT messageHelper)
+
+add_executable(messageHelperTest messageHelperTest.cpp
+    $<TARGET_OBJECTS:Buffer>
+    $<TARGET_OBJECTS:messageHelper>
+)
 add_test(NAME messageHelperTest-converts_small_integer_into_char_array COMMAND messageHelperTest converts_small_integer_into_char_array)
 add_test(NAME messageHelperTest-converts_large_integer_into_char_array COMMAND messageHelperTest converts_large_integer_into_char_array)
 add_test(NAME messageHelperTest-converts_small_integer_back_from_char_array COMMAND messageHelperTest converts_small_integer_back_from_char_array)

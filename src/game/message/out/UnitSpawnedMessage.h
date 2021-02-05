@@ -1,9 +1,9 @@
 #pragma once
 
 #include <string.h>
-#include "../Unit.h"
+#include "../../core/Unit.h"
 #include "SimpleMessageOut.h"
-#include "messageHelper.h"
+#include "../messageHelper.h"
 
 class UnitSpawnedMessage: public SimpleMessageOut {
     public:

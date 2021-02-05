@@ -7,12 +7,12 @@
 #include "../net/Server.h"
 #include "../net/ClientCallback.h"
 #include "../events/EpollController.h"
-#include "GameConfig.h"
-#include "MessageFilter.h"
+#include "core/GameConfig.h"
+#include "core/MessageFilter.h"
 #include "GameMessageIdentifier.h"
 #include "Game.h"
 #include "Player.h"
-#include "Logger.h"
+#include "core/Logger.h"
 
 class GameController {
     public:

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "cmath"
-#include "Point.h"
-#include "Unit.h"
-#include "Map.h"
-#include "UnitFactory.h"
+#include "core/Point.h"
+#include "core/Unit.h"
+#include "core/Map.h"
+#include "core/UnitFactory.h"
 #include "Player.h"
-#include "GameConfig.h"
+#include "core/GameConfig.h"
 
 class PlayerSpawner {
     public:

@@ -2,10 +2,10 @@
 
 #include <string.h>
 #include <unordered_map>
-#include "../Unit.h"
-#include "messageHelper.h"
+#include "../../core/Unit.h"
+#include "../messageHelper.h"
 #include "SimpleMessageOut.h"
-#include "../Player.h"
+#include "../../Player.h"
 
 class PlayersScoreChangedMessage : public SimpleMessageOut {
     public:

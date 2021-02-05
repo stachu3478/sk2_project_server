@@ -12,26 +12,25 @@ add_executable(main
     src/net/Server
     src/net/NettyClient
     $<TARGET_OBJECTS:Buffer>
-    src/game/GameConfig
-    src/game/Logger
-    src/game/Unit
+    src/game/core/GameConfig
+    src/game/core/Logger
+    src/game/core/Unit
     $<TARGET_OBJECTS:messageHelper>
-    src/game/message/GameMessage
     $<TARGET_OBJECTS:PlayMessage>
     $<TARGET_OBJECTS:KickMessage>
-    src/game/message/GameJoinedMessage
-    src/game/message/LobbyJoinedMessage
-    src/game/message/PlayerJoinedMessage
-    src/game/message/UnitMovedMessage
+    $<TARGET_OBJECTS:GameJoinedMessage>
+    $<TARGET_OBJECTS:LobbyJoinedMessage>
+    $<TARGET_OBJECTS:PlayerJoinedMessage>
+    $<TARGET_OBJECTS:UnitMovedMessage>
     $<TARGET_OBJECTS:MoveUnitsMessage>
     $<TARGET_OBJECTS:AttackUnitsMessage>
-    src/game/message/UnitAttackedMessage
-    src/game/message/UnitDestroyedMessage
-    src/game/message/UnitSpawnedMessage
-    src/game/message/PlayersScoreChangedMessage
-    src/game/MessageFilter
-    src/game/UnitFactory
-    src/game/Map
+    $<TARGET_OBJECTS:UnitAttackedMessage>
+    $<TARGET_OBJECTS:UnitDestroyedMessage>
+    $<TARGET_OBJECTS:UnitSpawnedMessage>
+    $<TARGET_OBJECTS:PlayersScoreChangedMessage>
+    src/game/core/MessageFilter
+    src/game/core/UnitFactory
+    src/game/core/Map
     src/game/PlayerSpawner
     $<TARGET_OBJECTS:Player>
     src/game/Game

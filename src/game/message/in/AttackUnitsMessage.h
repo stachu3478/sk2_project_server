@@ -1,31 +1,28 @@
 #pragma once
 
 #include <functional>
-#include "../../net/Buffer.h"
-#include "../../net/Message.h"
+#include "../../../net/Buffer.h"
 #include "GameMessage.h"
-#include "messageHelper.h"
+#include "../messageHelper.h"
 
-class MoveUnitsMessage : public GameMessage {
+class AttackUnitsMessage : public GameMessage {
     public:
-        MoveUnitsMessage(std::function<void(MoveUnitsMessage*)> cb, int maxBatchSize);
-        virtual ~MoveUnitsMessage();
+        AttackUnitsMessage(std::function<void(AttackUnitsMessage*)> cb, int maxBatchSize);
+        virtual ~AttackUnitsMessage();
 
         int* getUnitIds() { return unitIds; };
-        int getTargetX() { return targetX; };
-        int getTargetY() { return targetY; };
+        int getTargetUnitId() { return targetUnitId; };
         int getUnitCount() { return unitCount; };
 
         void readBuffer(Buffer* buffer);
         bool isComplete() { return complete; };
         void receive() { if (!ignored) callback(this); delete this; };
     private:
-        std::function<void(MoveUnitsMessage*)> callback;
+        std::function<void(AttackUnitsMessage*)> callback;
         int* unitIds;
         bool complete = false;
         bool lengthRead = false;
-        int targetX;
-        int targetY;
+        int targetUnitId;
         int unitCountToRead;
         int unitCount;
         int maxBatchSize;

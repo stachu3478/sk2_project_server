@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../net/Buffer.h"
+#include "../../../net/Buffer.h"
 #include "GameMessage.h"
 
 class SimpleMessage : public GameMessage {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../net/Message.h"
+#include "../../../net/Message.h"
 
 enum GMessage {
     PLAY = 0,

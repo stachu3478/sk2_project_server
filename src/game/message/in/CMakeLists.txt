@@ -1,0 +1,3 @@
+add_library(AttackUnitsMessage OBJECT AttackUnitsMessage)
+add_library(MoveUnitsMessage OBJECT MoveUnitsMessage)
+add_library(PlayMessage OBJECT PlayMessage)

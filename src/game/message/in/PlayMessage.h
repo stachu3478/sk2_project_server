@@ -2,13 +2,12 @@
 
 #include <sstream>
 #include <algorithm>
-#include "../../net/Buffer.h"
-#include "../../net/Message.h"
+#include "../../../net/Buffer.h"
 #include "GameMessage.h"
 
 class PlayMessage : public GameMessage {
     public:
-        PlayMessage(std::function<void(PlayMessage*)> cb);
+        PlayMessage(std::function<void(PlayMessage*)> cb) { this->callback = cb; };
         virtual ~PlayMessage() {};
 
         std::string getNickname() { return nickname; };

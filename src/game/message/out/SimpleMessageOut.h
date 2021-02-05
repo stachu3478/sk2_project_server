@@ -1,9 +1,7 @@
 #pragma once
 
 #include <string.h>
-#include "../Unit.h"
-#include "../../net/MessageOut.h"
-#include "messageHelper.h"
+#include "../../../net/MessageOut.h"
 
 class SimpleMessageOut : public MessageOut {
     public:
